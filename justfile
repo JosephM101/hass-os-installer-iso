@@ -1,25 +1,109 @@
-default: build
+# Variables used by the recipes.
+livebuild_dir := "build"
+out_dir := "out"
+
+set export  # Export the above defined variables to the current environment, for use by the build scripts
+
+
+# Formulas
+default:
+  just --list
+
 
 install-depends:
-    sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build -y
+    sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build debian-archive-keyring -y
 
-build:
-    ./build.sh
 
+build: mkexec
+    #!/bin/bash
+    if [ ! -d "$livebuild_dir" ]; then
+        mkdir -p $livebuild_dir
+        cd $livebuild_dir
+    else
+        cd $livebuild_dir
+        echo "Running 'lb clean'"
+        sudo lb clean
+    fi
+
+    set -e
+    set -x
+
+    # Run build steps
+    ../steps/00-livebuild-config.sh
+    ../steps/01-add-packages.sh
+    
+    # Copy hooks to config folder
+    #cp ../hooks/* config/hooks/live/
+    rsync -av --progress ../hooks/ config/hooks/live/ --exclude disabled
+
+    # Copy GRUB config
+    cp -rf ../resources/grub-pc config/bootloaders/
+
+    sudo lb build
+
+
+#[confirm("Are you sure you want to clean everything? (y/n)")]
 clean:
     # Delete built rootfs directory and files
     # A password may be required to continue
+    sudo rm -rf $livebuild_dir
+    rm -rf $out_dir
 
-    sudo rm -rf rootfs
-    rm -rf out
-    rm -f .build-done
 
 iso:
+    #!/bin/bash
+    # This does nothing right now.
     # [ -d ".build-done" ] && echo "A built root FS exists"
-    ./create-boot-iso-structure.sh out/iso
+    # ./create-boot-iso-structure.sh out/iso
     # Copy GRUB bootloader
 
-run-qemu:
-    ./run-qemu.sh
 
-build-full: build iso
+run-qemu:
+    #!/bin/bash
+    iso=( build/*.iso )
+
+    qemu_args=(
+        --bios /usr/share/ovmf/OVMF.fd
+        -m 1024
+        -smp 2
+        -nic user,model=virtio-net-pci
+        -cdrom ${iso[0]}
+    )
+    qemu-system-x86_64 ${qemu_args[@]}
+    #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
+
+
+[confirm("This recipe will download, compile and install live-build from source (this is useful if the version offered by your distro is old).\nThe source will be downloaded and built within your home folder. It will remain, should you choose to uninstall it (sudo make uninstall).\nSome required build dependencies will be installed in order to continue (git, po4a, debhelper-compat, devscripts).\nWould you like to continue? [y/N]")]
+install-livebuild-from-source:
+    int-build-livebuild-from-source
+    int-install-livebuild
+
+
+[private]
+int-build-livebuild-from-source:
+    #!/bin/bash
+    # Based on instructions from https://live-team.pages.debian.net/live-manual/html/live-manual/installation.en.html
+    cd ~ # Go to home directory
+    echo Will now attempt to remove any installed version of live-build.
+    sudo apt-get remove live-build -y
+    set -e
+    sudo apt-get install git po4a debhelper-compat devscripts  # Install build dependencies
+    mkdir -p livebuild-src
+    cd livebuild-src
+    git clone https://salsa.debian.org/live-team/live-build.git live-build
+    cd live-build
+    dpkg-buildpackage -b -uc -us
+
+[private]
+int-install-livebuild:
+    #!/usr/bin/env python
+    import os
+
+
+mkexec:
+    #!/bin/bash
+    #find . -iname "*.sh" -exec echo chmod +x {} \;
+    #find . -iname "*.sh" -exec chmod +x {} \;
+    echo "Making sure scripts are runnable"
+    find steps/* -exec chmod +x {} \;
+    find steps/* -exec echo chmod +x {} \;
