@@ -1,0 +1,1 @@
+pip install pythondialog requests tqdm pyyaml wget click psutil pyfiglet prompt_toolkit termcolor colorama python-xz pyudev

@@ -1,1 +1,0 @@
-pip install pythondialog requests tqdm wget click psutil pyfiglet prompt_toolkit

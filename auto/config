@@ -1,4 +1,6 @@
-# NOTE: If you change anything in this file, you will need to run "just clean" and build from scratch.
+#!/bin/bash
+# live-build configuration script
+# see 'man lb config'
 
 args=(
 --bootloaders grub-efi
@@ -24,10 +26,10 @@ args=(
 --iso-preparer "josephmignone"
 --iso-publisher "josephmignone"
 --compression xz
-#--verbose
+--verbose
 --color
+--clean
 #--interactive shell
 )
 
-#lb config ${args[@]}
 lb config noauto ${args[@]}

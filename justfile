@@ -1,7 +1,3 @@
-# Variables used by the recipes.
-livebuild_dir := "build"
-out_dir := "out"
-
 set export  # Export the above defined variables to the current environment, for use by the build scripts
 
 
@@ -14,60 +10,30 @@ install-depends:
     sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build debian-archive-keyring -y
 
 
-build: mkexec
-    #!/bin/bash
-    if [ ! -d "$livebuild_dir" ]; then
-        mkdir -p $livebuild_dir
-        cd $livebuild_dir
-    else
-        cd $livebuild_dir
-        echo "Running 'lb clean'"
-        sudo lb clean
-    fi
-
-    set -e
-    set -x
-
-    # Run build steps
-    ../steps/00-livebuild-config.sh
-    ../steps/01-add-packages.sh
-    
-    # Copy hooks to config folder
-    #cp ../hooks/* config/hooks/live/
-    rsync -av --progress ../hooks/ config/hooks/live/ --exclude disabled
-
-    # Copy GRUB config
-    cp -rf ../resources/grub-pc config/bootloaders/
-
+build:
+    sudo lb clean --all
+    lb config
     sudo lb build
 
 
-#[confirm("Are you sure you want to clean everything? (y/n)")]
+[confirm("Are you sure you want to clean everything? (y/n)")]
 clean:
-    # Delete built rootfs directory and files
-    # A password may be required to continue
-    sudo rm -rf $livebuild_dir
-    rm -rf $out_dir
-
-
-iso:
-    #!/bin/bash
-    # This does nothing right now.
-    # [ -d ".build-done" ] && echo "A built root FS exists"
-    # ./create-boot-iso-structure.sh out/iso
-    # Copy GRUB bootloader
+    sudo lb clean --all
+    sudo lb clean --purge
+    sudo rm -rf cache
+    sudo rm -rf .build
 
 
 run-qemu:
     #!/bin/bash
-    iso=( build/*.iso )
+    iso=( *.iso ) # Find all iso files in the current directory
 
     qemu_args=(
         --bios /usr/share/ovmf/OVMF.fd
         -m 1024
         -smp 2
         -nic user,model=virtio-net-pci
-        -cdrom ${iso[0]}
+        -cdrom ${iso[0]} # Take the first ISO image found
     )
     qemu-system-x86_64 ${qemu_args[@]}
     #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
@@ -98,12 +64,3 @@ int-build-livebuild-from-source:
 int-install-livebuild:
     #!/usr/bin/env python
     import os
-
-
-mkexec:
-    #!/bin/bash
-    #find . -iname "*.sh" -exec echo chmod +x {} \;
-    #find . -iname "*.sh" -exec chmod +x {} \;
-    echo "Making sure scripts are runnable"
-    find steps/* -exec chmod +x {} \;
-    find steps/* -exec echo chmod +x {} \;
