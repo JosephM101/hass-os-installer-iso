@@ -1,0 +1,10 @@
+dialog
+dbus
+wget
+curl
+gdisk
+parted
+hdparm
+sdparm
+dosfstools
+ntfs-3g

@@ -10,13 +10,13 @@ args=(
 -b iso
 --iso-volume "HAOS_INSTALLER"
 --system live
---distribution bullseye
+--distribution bookworm
 --apt apt-get
 --apt-indices false
 --apt-source-archives false
 --archive-areas "main contrib"
 --mode debian
-#--apt-recommends false
+--apt-recommends false
 --debian-installer none
 --debian-installer-gui false
 --win32-loader false
@@ -29,6 +29,7 @@ args=(
 --verbose
 --color
 --clean
+#--bootappend-live "boot=live components hostname=live-boot username=live"
 #--interactive shell
 )
 

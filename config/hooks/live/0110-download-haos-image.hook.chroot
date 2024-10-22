@@ -1,0 +1,6 @@
+HAOS_VERSION=13.2
+IMAGE_DIR=/haos-image
+
+mkdir $IMAGE_DIR
+wget https://github.com/home-assistant/operating-system/releases/download/$HAOS_VERSION/haos_generic-x86-64-$HAOS_VERSION.img.xz -P $IMAGE_DIR
+echo $HAOS_VERSION > $IMAGE_DIR/version
