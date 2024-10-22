@@ -10,6 +10,9 @@ install-depends:
     sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build debian-archive-keyring -y
 
 
+build-default: clean build
+
+
 build:
     lb config
     sudo lb build
