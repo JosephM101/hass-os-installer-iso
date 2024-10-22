@@ -12,3 +12,13 @@ config/bootstrap
 config/chroot
 config/common
 config/source
+config/package-lists/live.list.chroot
+config/hooks/live/0010-disable-kexec-tools.hook.chroot
+.lock
+config/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot
+chroot.installed_tmp_pkgs
+haos-installer-amd64.files
+haos-installer-amd64.packages
+haos-installer-amd64.iso
+haos-installer-amd64.contents
+binary.modified_timestamps
