@@ -1,12 +1,54 @@
 #!/bin/bash
 # live-build configuration script
 # see 'man lb config'
+set -e
+
+source build-config
+echo "HAOS Version: $CFG_HAOS_VERSION"
+
+patch_grub_config() {
+    local GRUB_CFG="config/bootloaders/grub-pc/grub.cfg"
+    local GRUB_CFG_TEMPLATE="${GRUB_CFG}.template"
+
+    # Delete grub.cfg if it exists
+    if [ -e "$GRUB_CFG" ]; then
+        rm "$GRUB_CFG"
+        echo "Deleting old grub.cfg"
+    fi
+
+    # Copy the template to create a new grub.cfg
+    echo "Patching grub.cfg"
+    cp "$GRUB_CFG_TEMPLATE" "$GRUB_CFG"
+
+    # Replace the placeholder with the actual CFG_HAOS_VERSION value
+    sed -i "s|@HAOS_VERSION@|$CFG_HAOS_VERSION|g" "$GRUB_CFG"
+
+    # Display the contents of the new grub.cfg for verification
+    echo ""
+    echo "Contents of $GRUB_CFG"
+    echo "--------------------"
+    cat "$GRUB_CFG"
+    echo "EOF"
+    echo "--------------------"
+    echo ""
+}
+
+patch_grub_config
+
+# Plant the seeds within the CHROOT environment for setting the HAOS version and downloading the image.
+# Downloading the image is handled by live hook 0110
+INCLUDES_CHROOT_PATH="config/includes.chroot"
+HAOS_IMG_DIR=$INCLUDES_CHROOT_PATH/$CFG_HAOS_IMG_DIR_CHROOT
+mkdir -p $HAOS_IMG_DIR
+echo "$CFG_HAOS_VERSION" > $HAOS_IMG_DIR/version
+echo "$CFG_HAOS_IMG_FILENAME" > $HAOS_IMG_DIR/imagename
+
 
 args=(
 --bootloaders grub-efi
 --architecture amd64
 --linux-flavours amd64
---image-name "haos-installer"
+--image-name "haos-installer-$CFG_HAOS_VERSION"
 -b iso
 --iso-volume "HAOS_INSTALLER"
 --system live

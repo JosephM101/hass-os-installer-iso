@@ -1,7 +1,10 @@
-#!/bin/sh
+#!/bin/bash
+
+set -e
+source build-config
 
 lb clean noauto "$@"
-rm -f binary.log prepare.log
+rm -f binary.log prepare.log build.log
 rm -rf	.build/ \
 	config/binary \
 	config/bootstrap \
@@ -33,3 +36,7 @@ rm -rf	.build/ \
 	config/hooks/live/0010-disable-kexec-tools.hook.chroot \
 	config/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot \
 	config/package-lists/live.list.chroot
+	
+# Remove generated/patched files
+rm -rf config/bootloaders/grub-pc/grub.cfg \
+	config/includes.chroot/$CFG_HAOS_IMG_DIR_CHROOT
