@@ -17,8 +17,19 @@ config/hooks/live/0010-disable-kexec-tools.hook.chroot
 .lock
 config/hooks/live/0050-disable-sysvinit-tmpfs.hook.chroot
 chroot.installed_tmp_pkgs
+binary.modified_timestamps
+
 haos-installer-amd64.files
 haos-installer-amd64.packages
 haos-installer-amd64.iso
 haos-installer-amd64.contents
-binary.modified_timestamps
+
+*.files
+*.packages
+*.iso
+*.contents
+
+# Patched/generated files
+config/bootloaders/grub-pc/grub.cfg
+config/includes.chroot/haos-image
+config/includes.chroot/haos-image/*
