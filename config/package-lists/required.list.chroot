@@ -9,3 +9,5 @@ sdparm
 dosfstools
 ntfs-3g
 xz-utils
+jq
+efibootmgr
