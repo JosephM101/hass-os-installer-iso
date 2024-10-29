@@ -1,5 +1,7 @@
 source /boot/grub/config.cfg
 
+set timeout=10
+
 # Live boot
 menuentry "Start the Home Assistant OS @HAOS_VERSION@ Installer" --hotkey=l {
 	linux	@KERNEL_LIVE@ @APPEND_LIVE@
