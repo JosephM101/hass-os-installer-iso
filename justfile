@@ -43,7 +43,7 @@ build:
         -m 1024
         -smp 2
         -nic user,model=virtio-net-pci
-        -cdrom ${iso[0]} # Take the first ISO image found
+        -cdrom ${iso[0]} # Use the first ISO image found
         -hda test-disk.qcow2
     )
     qemu-system-x86_64 ${qemu_args[@]}
