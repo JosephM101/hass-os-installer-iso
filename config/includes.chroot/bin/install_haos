@@ -14,6 +14,7 @@ import re
 import inquirer
 import psutil
 import bitmath
+import zstandard as zstd
 
 def handler(signum, frame):
     #print(f'Signal handler called with signal {signum}')
@@ -212,7 +213,7 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
         print_error("Cancelled")
         exit(1)
     
-    def find_disk_by_id(disks, value) -> LinuxDiskObject:
+    def find_disk_in_array_by_name(disks, value) -> LinuxDiskObject:
       for disk in disks:
         if disk.name == value:
           return disk
@@ -220,7 +221,7 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
 
     # Retrieve the disk info from the collection based on the selection.
     target_disk_answer = answers['disk'].split()[0]
-    selected_disk = find_disk_by_id(disks, target_disk_answer)
+    selected_disk = find_disk_in_array_by_name(disks, target_disk_answer)
     if selected_disk == None:
         print_error("Whoops! We ran into a catastrophic error!\nSetup can't continue. Please restart the installer.\nYou can use the 'start-installer' command.\n")
     install_config.target_disk = selected_disk.name
