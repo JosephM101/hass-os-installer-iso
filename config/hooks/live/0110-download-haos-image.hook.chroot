@@ -5,8 +5,8 @@ HAOS_IMG_NAME=$(cat $IMAGE_DIR/imagename)
 HAOS_IMG_ABSOLUTE_PATH=$IMAGE_DIR/$HAOS_IMG_NAME
 
 # Download only if the image doesn't already exist
-if [ -ne $HAOS_IMG_ABSOLUTE_PATH ] ; then
-    wget -O $HAOS_IMG_ABSOLUTE_PATH https://github.com/home-assistant/operating-system/releases/download/$HAOS_VERSION/haos_generic-x86-64-$HAOS_VERSION.img.xz
-else
+if [ -e $HAOS_IMG_ABSOLUTE_PATH ] ; then
     echo "$HAOS_IMG_ABSOLUTE_PATH already exists. Skipping download..."
+else
+    wget -O $HAOS_IMG_ABSOLUTE_PATH https://github.com/home-assistant/operating-system/releases/download/$HAOS_VERSION/haos_generic-x86-64-$HAOS_VERSION.img.xz
 fi
