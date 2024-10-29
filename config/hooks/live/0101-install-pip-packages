@@ -1,1 +1,1 @@
-pip install --break-system-packages inquirer bitmath
+pip install --break-system-packages inquirer bitmath zstandard
