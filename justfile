@@ -1,5 +1,6 @@
 set export  # Export the above defined variables to the current environment, for use by the build scripts
 
+qemu_test_disk_filename := "test-disk.qcow2"
 
 # Formulas
 default:
@@ -18,28 +19,32 @@ build:
     sudo lb build
 
 
-clean:
+@clean:
     sudo lb clean --all
+    rm $qemu_test_disk_filename
 
 
 [confirm("Are you sure you want to clean everything? (y/n)")]
-fully-clean:
+@fully-clean:
     sudo lb clean --all
     sudo lb clean --purge
     sudo rm -rf cache
     sudo rm -rf .build
+    rm $qemu_test_disk_filename
 
 
-run-qemu:
+@run-qemu:
     #!/bin/bash
     iso=( *.iso ) # Find all iso files in the current directory
 
+    qemu-img create -f qcow2 $qemu_test_disk_filename 32G
     qemu_args=(
         --bios /usr/share/ovmf/OVMF.fd
         -m 1024
         -smp 2
         -nic user,model=virtio-net-pci
         -cdrom ${iso[0]} # Take the first ISO image found
+        -hda test-disk.qcow2
     )
     qemu-system-x86_64 ${qemu_args[@]}
     #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
