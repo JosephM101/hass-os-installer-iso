@@ -63,7 +63,7 @@ args=(
 --debian-installer-gui false
 --win32-loader false
 --debootstrap-options "--include=apt-transport-https,ca-certificates,openssl"
---memtest memtest86+
+--memtest false
 --iso-application "home-assistant-os-installer"
 --iso-preparer "josephmignone"
 --iso-publisher "josephmignone"
