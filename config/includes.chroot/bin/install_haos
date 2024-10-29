@@ -16,7 +16,7 @@ import psutil
 import bitmath
 import zstandard as zstd
 
-def handler(signum, frame):
+def sigint_handler(signum, frame):
     #print(f'Signal handler called with signal {signum}')
     pass
 
@@ -134,13 +134,13 @@ def clear_screen():
 
 
 if __name__ == "__main__":
-    be_a_nag = True
+    be_a_nag = True  # Do we want to ask the user twice before continuing?
     install_config: HaosInstallConfig = HaosInstallConfig()
     
     # Initialize colorama
     colorama_init()
 
-    signal.signal(signal.SIGINT, handler)
+    signal.signal(signal.SIGINT, sigint_handler)  # Add handler to handle (and dismiss) Ctrl-C/SIGINT events
 
     with open('/haos-image/imagename', 'r') as file:
         imagename = file.read().rstrip()
