@@ -177,19 +177,23 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
     for disk in disks:
         disk_choices.append(f"{disk.name} - {disk.model} [{disk.size}]")
 
-    questions = [
-      inquirer.List('disk',
+    disk_selection_question = inquirer.List('disk',
                     message="What disk do you want to install to?",
                     choices=disk_choices,
                     carousel=True
-                    ),
+                    )
+    questions = [
+      disk_selection_question,
       inquirer.List('create_boot_entry',
                     message="Would you like to create a custom boot entry?",
                     choices=['Yes', 'No'],
                     default='Yes',
                     carousel=True
-                    ) if enable_feature_add_boot_entry else None,
+                    ),
+    ] if enable_feature_add_boot_entry == True else [
+      disk_selection_question
     ]
+
     try:
       answers = inquirer.prompt(questions, raise_keyboard_interrupt=True)
       
