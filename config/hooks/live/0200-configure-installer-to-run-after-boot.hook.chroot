@@ -1,0 +1,25 @@
+set -e
+
+cat <<EOF > /etc/systemd/system/start-installer.service
+[Unit]
+Description=HAOS Installer
+After=multi-user.target
+
+[Service]
+ExecStart=/bin/start-installer
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Enable service
+systemctl enable start-installer.service
+
+# Disable getty on TTY1 and serial ports
+systemctl mask console-getty.service
+systemctl mask getty@tty1.service

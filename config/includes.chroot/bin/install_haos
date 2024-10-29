@@ -1,0 +1,267 @@
+#!/bin/python3
+
+enable_feature_add_boot_entry = False
+
+import os, signal
+import click
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+import subprocess
+from time import sleep
+import json
+import re
+import inquirer
+from inquirer.themes import GreenPassion
+import psutil
+import bitmath
+
+def handler(signum, frame):
+    #print(f'Signal handler called with signal {signum}')
+    pass
+
+# https://www.asciiart.eu/image-to-ascii
+home_assistant_ascii_art_minimalist = """\
+                ....                
+              ........              
+            ............            
+          ................          
+        ....................        
+       ........      ........       
+    ...........      ...........    
+   .............    .............   
+ ................  ................ 
+.................  .................
+.................  .....      ......
+.................  .....      ......
+........  .......  ....      .......
+......      .....  ..    ...........
+......      .....      .............
+........      ...    ...............
+............    .  .................
+..............     .................
+................   .................
+"""
+
+
+
+class HaosInstallConfig:
+    def __init__(self):
+        """
+        The name of the disk to install to (ex. /dev/sda)
+        """
+        self.target_disk = ""
+
+        self.source_image = ""
+
+        self.source_image_version = ""
+        
+        """
+        If true, install-haos will modify the system's boot priority to automatically boot to HAOS.
+        Uses 'efibootmgr'.
+        """
+        self.system_efi_update_boot_priority = False
+
+
+class LinuxDiskObject:
+    def __init__(self):
+        self.name = "" # ex. sda, sdb
+        self.model = "" # ex. Samsung SSD 850 EVO
+        self.size = "" # ex. 500GB
+
+
+def boot_entry_label_validation(answers, current):
+    if not re.match(r"^[a-zA-Z0-9 ]{1,16}$", current):
+        raise inquirer.errors.ValidationError("", reason="The name can only have alphanumeric characters, underscores and spaces, and can't be longer than 16 characters.")
+    return True
+
+
+def get_disks():
+    # use lsblk to get a list of disks that can be installed to, filtering out devices such as loop and ROM devices
+    disks = []
+    result = subprocess.run(['lsblk', '-o', 'NAME,SIZE,MODEL,TYPE', '--json'], 
+                            stdout=subprocess.PIPE, 
+                            text=True)
+    json_data = json.loads(result.stdout)
+    block_devices = json_data["blockdevices"]
+
+    for block_device in block_devices:
+        if block_device['type'] == "disk" and 'fd' not in block_device['name']:
+            disk_obj = LinuxDiskObject()
+            disk_obj.name = block_device['name']
+            disk_obj.size = block_device['size']
+            if block_device['model'] and block_device['model'] != "null":
+                disk_obj.model = block_device['model']
+            else:
+                disk_obj.model = "UNKNOWN"
+            disks.append(disk_obj)
+
+    return disks
+
+
+def print_error(message):
+    print(f"{Fore.RED}{message}{Fore.RESET}")
+
+
+### TODO: This function needs to be tested on physical hardware. It may or may not result in duplicate boot entries.
+def create_efi_boot_entry(drive_name: str, boot_entry_label: str):
+    loader_path = '\\EFI\\BOOT\\bootx64.efi'
+
+    print(f"{Fore.CYAN}Adding EFI boot entry for {drive_name} named \"{boot_entry_label}\"")
+
+    #os.system(f"efibootmgr --create --disk /dev/{drive_name} --part 1 --label \"{boot_entry_label}\" --loader {loader_path}")
+    try:
+        args = [
+            'efibootmgr',  # The command to run
+            '--create',  # Create a new boot entry...
+            f'-d /dev/{drive_name}',  # ...for this drive
+            '-p 1',  # The partition of the drive where the boot loader (ex. bootx64.efi) is located
+            f'--label "{boot_entry_label}"',  # The name that the boot entry should have in your EFI
+            f'--loader {loader_path}'  # The path to the boot loader (.efi) file
+        ]
+        print(args)
+        subprocess.run(args, shell=True, check=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"{Fore.RED}Failed to create boot entry!")
+        print(f"'efibootmgr': subprocess failed with error code {e.returncode}")
+        #print(f"output: \n{e.output}")
+        return False
+
+
+def clear_screen():
+    os.system('clear')
+
+
+if __name__ == "__main__":
+    be_a_nag = True
+    install_config: HaosInstallConfig = HaosInstallConfig()
+    
+    # Initialize colorama
+    colorama_init()
+
+    signal.signal(signal.SIGINT, handler)
+
+    with open('/haos-image/imagename', 'r') as file:
+        imagename = file.read().rstrip()
+        install_config.source_image = f"/haos-image/{imagename}"
+        if os.path.exists(install_config.source_image):
+            print(f"Found HAOS image: {install_config.source_image}")
+            # Get the version of the HAOS image
+            sleep(0.5)
+
+    clear_screen()
+
+    print(home_assistant_ascii_art_minimalist)
+    for _ in range(0,2):
+        print()
+    print("Welcome to the (unofficial) Home Assistant OS Installer!")
+
+    print()
+
+    # Check memory requirements (>4GB)
+    total_system_memory = bitmath.Byte(psutil.virtual_memory().total)
+    total_system_memory_mb = total_system_memory.to_MB().value
+    # print(f"System has {total_system_memory.to_MB()} of total RAM")
+    if total_system_memory_mb < 4000:
+        print(f"""{Fore.YELLOW}\
+WARNING: Your system has less than 4 GB of RAM. At least 8 GB is recommended for stable operation.
+You may run into stability problems with multiple addons.
+              
+Your system has {round(total_system_memory_mb)} MB of RAM.
+{Fore.RESET}""")
+
+
+    disks = get_disks()
+    disk_choices = []
+    for disk in disks:
+        disk_choices.append(f"{disk.name} - {disk.model} [{disk.size}]")
+
+    questions = [
+      inquirer.List('disk',
+                    message="What disk do you want to install to?",
+                    choices=disk_choices,
+                    carousel=True
+                    ),
+      inquirer.List('create_boot_entry',
+                    message="Would you like to create a custom boot entry?",
+                    choices=['Yes', 'No'],
+                    default='Yes',
+                    carousel=True
+                    ) if enable_feature_add_boot_entry else None,
+    ]
+    try:
+      answers = inquirer.prompt(questions, raise_keyboard_interrupt=True)
+      
+      if enable_feature_add_boot_entry:
+        if answers['create_boot_entry'] == "Yes":
+            additional_question = [
+                inquirer.Text('boot_entry_name',
+                        message="Name the boot entry",
+                        default="Home Assistant",
+                        validate=boot_entry_label_validation
+                        ),
+            ]
+            additional_answer = inquirer.prompt(additional_question)
+            answers.update(additional_answer)
+          
+    except:
+        print_error("Cancelled")
+        exit(1)
+    
+    def find_disk_by_id(disks, value) -> LinuxDiskObject:
+      for disk in disks:
+        if disk.name == value:
+          return disk
+      return None
+
+    # Retrieve the disk info from the collection based on the selection.
+    target_disk_answer = answers['disk'].split()[0]
+    selected_disk = find_disk_by_id(disks, target_disk_answer)
+    if selected_disk == None:
+        print_error("Whoops! We ran into a catastrophic error!\nSetup can't continue. Please restart the installer.\nYou can use the 'start-installer' command.\n")
+    install_config.target_disk = selected_disk.name
+
+
+    ### Ask user for confirmation before continuing.
+
+    print()
+    #print(f"It is recommended before installing that any disks you don't want to touch are removed, should something unexpected happen.")
+    warning_message = f"ALL data on {install_config.target_disk} - {selected_disk.model} will be ERASED! Are you sure you want to continue?"
+    first_warning_result = click.confirm(f"{Fore.YELLOW}{warning_message}{Fore.RESET}")
+    if first_warning_result == False:
+        exit(1)
+    print()
+    if be_a_nag:
+        nag_warning_result = click.confirm(f"{Fore.YELLOW}{Style.BRIGHT}LAST WARNING!!!{Style.RESET_ALL}\n{Fore.YELLOW}{warning_message}{Fore.RESET}")
+        if nag_warning_result == False:
+            exit(1)
+
+    print("Okay!")
+    print()
+
+    # Start writing the image to the selected disk using the DD command
+    print(f"{Fore.CYAN}Writing image to {install_config.target_disk}{Fore.RESET}")
+    os.system(f"xzcat {install_config.source_image} | sudo dd of=/dev/{install_config.target_disk} bs=4M status=progress")
+    
+    if enable_feature_add_boot_entry:
+        if answers['create_boot_entry'] == 'Yes':
+            create_efi_boot_entry(drive_name=install_config.target_disk, boot_entry_label=answers['boot_entry_name'])
+        
+    print()
+    print(f"{Fore.GREEN}Installation complete!{Fore.RESET}")
+    questions = [
+      inquirer.List('poweroptions',
+                    message="What would you like to do?",
+                    choices=["Reboot", "Shutdown"],
+                    ),
+    ]
+    answers = inquirer.prompt(questions, raise_keyboard_interrupt=True)
+
+    print("Remember to remove your boot media!")
+    input("Press the Enter key to continue.")
+
+    if answers['poweroptions'] == "Reboot":
+        os.system("sudo reboot now")
+    else:
+        os.system("sudo shutdown now")

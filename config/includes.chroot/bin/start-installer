@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+clear
+echo Starting HAOS installer...
+sleep 1
+/bin/install_haos
