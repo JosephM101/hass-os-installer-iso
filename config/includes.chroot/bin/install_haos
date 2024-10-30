@@ -14,7 +14,6 @@ import re
 import inquirer
 import psutil
 import bitmath
-import zstandard as zstd
 
 def sigint_handler(signum, frame):
     #print(f'Signal handler called with signal {signum}')
@@ -246,6 +245,7 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
 
     # Start writing the image to the selected disk using the DD command
     print(f"{Fore.CYAN}Writing image to {install_config.target_disk}{Fore.RESET}")
+
     os.system(f"xzcat {install_config.source_image} | sudo dd of=/dev/{install_config.target_disk} bs=4M status=progress")
     
     if enable_feature_add_boot_entry:
