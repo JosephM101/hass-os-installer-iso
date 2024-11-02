@@ -21,7 +21,7 @@ build:
 
 @clean:
     sudo lb clean --all
-    rm $qemu_test_disk_filename
+    rm -f $qemu_test_disk_filename
 
 
 [confirm("Are you sure you want to clean everything? (y/n)")]
@@ -30,7 +30,7 @@ build:
     sudo lb clean --purge
     sudo rm -rf cache
     sudo rm -rf .build
-    rm $qemu_test_disk_filename
+    rm -f $qemu_test_disk_filename
 
 
 @run-qemu:
