@@ -265,7 +265,12 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
     print("Remember to remove your boot media!")
     input("Press the Enter key to continue.")
 
+    clear_screen()
     if answers['poweroptions'] == "Reboot":
+        print("Rebooting now...")
         os.system("sudo reboot now")
+        print()
     else:
         os.system("sudo shutdown now")
+        print("Shutting down...")
+        print()
