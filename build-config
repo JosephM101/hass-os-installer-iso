@@ -1,3 +1,6 @@
-CFG_HAOS_VERSION=12.4  # The version of Home Assistant OS to be downloaded and included in the installer ISO
+# The version of Home Assistant OS to be downloaded and included in the installer ISO
+CFG_HAOS_VERSION=12.4
+
+# Do not change! (Unless you know what you're doing)
 CFG_HAOS_IMG_DIR_CHROOT=haos-image  # Directory to put the downloaded haos-image on the chroot filesystem. Starts at root.
 CFG_HAOS_IMG_FILENAME=haos.img.xz  # The name that will be given to the downloaded HAOS image.
