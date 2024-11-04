@@ -7,6 +7,8 @@ This image only supports AMD64 systems with UEFI bootloaders. These aren't my re
 
 The image is built using `live-build`, which is a system for creating customized live Debian-based images.
 
+<b>NOTE: This project is still in development.</b>
+
 
 ## How to use
 Like any other ISO file, you can write it to a USB drive using balenaEtcher or Rufus, or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
