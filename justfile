@@ -19,11 +19,6 @@ build:
     sudo lb build
 
 
-build-with-vagrant:
-    # No provider installed? Try running: vagrant up --provision --install-provider
-    vagrant up --provision
-
-
 @clean:
     sudo lb clean --all
     rm -f $qemu_test_disk_filename
