@@ -143,6 +143,6 @@ When Vagrant finishes, the resulting virtual machine is left behind. If you'd li
 
 This will destroy the virtual machine, but won't delete the box that was downloaded and used to create the virtual machine. If you choose not to delete the box, it won't need to be redownloaded if you decide to run `vagrant up` again.
 
-If you want to delete the box to regain more disk space, run the following command:
+If you want to delete the box and reclaim disk space, run the following command:
 
     vagrant box remove
