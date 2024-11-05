@@ -13,7 +13,7 @@ The image is built using `live-build`, which is a system for creating customized
 ## How to use
 Like any other ISO file, you can write it to a USB drive using balenaEtcher or Rufus, or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
 
-> Personally, I like using [Ventoy](https://www.ventoy.net/en/index.html) on my USB drives since it allows you to store multiple bootable ISO files on a single flash drive without the need for reformatting, and you can choose which one to boot from.
+> Personally, I like using [Ventoy](https://www.ventoy.net/en/index.html) on my USB drives because it allows me to store multiple bootable ISO files on a single flash drive without needing to reformat.
 
 Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm and verify your selection. Once you have confirmed the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot or shut down your machine.
 
