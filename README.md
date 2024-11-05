@@ -113,11 +113,11 @@ This repository ships with a Vagrantfile in the top-most directory that contains
 ### Step 1: Install Vagrant
 First off, you'll need to have Vagrant installed. You can [install Vagrant from here](https://developer.hashicorp.com/vagrant/install). 
 
-To check if you have Vagrant installed, and that it's working, open a terminal or PowerShell window, and run the following command:
+To check if your Vagrant installation is working, open a terminal or PowerShell window and run the following command:
 
     vagrant --version
 
-If you see a line like `Vagrant 2.4.2` in your output, congratulations! You can continue on to Step 2! If you see anything else, such as "command not found", Vagrant probably isn't installed.
+If you see a line like `Vagrant 2.4.2` in your output, congratulations! You can continue on to Step 2! If you see anything else, such as "command not found", Vagrant probably isn't installed or didn't install correctly.
 
 Awesome! Now you just need to install a compatible hypervisor!
 
