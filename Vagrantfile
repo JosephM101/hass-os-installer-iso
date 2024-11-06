@@ -1,9 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# Create a directory where the final ISO image will end up
-Dir.mkdir("out") unless Dir.exist?("out")
-
 Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
@@ -23,7 +20,7 @@ Vagrant.configure("2") do |config|
     shell.keep_color = true
     shell.inline = <<-SHELL
       REPO_DIR="/vagrant" # The path on the host where the Vagrantfile is located (in this case, the root of the repository directory)
-      OUTPUT_DIR="$REPO_DIR/out" # The path on the host system (within the repository directory) where the final ISO will end up.
+      OUTPUT_DIR="$REPO_DIR/" # The path on the host system (within the repository directory) where the final ISO will end up.
       TEMP_BUILD_DIR="/build-temp" # The path within the container where building will take place, separate from the host filesystem.
 
       # Update APT and install some packages we'll need
