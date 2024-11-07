@@ -2,4 +2,4 @@
 clear
 echo Starting HAOS installer...
 sleep 1
-/bin/install_haos
+/bin/haos-installer/install_haos

@@ -1,7 +1,5 @@
 #!/bin/python3
 
-enable_feature_add_boot_entry = False
-
 import os, signal
 import click
 from colorama import init as colorama_init
@@ -14,6 +12,13 @@ import re
 import inquirer
 import psutil
 import bitmath
+import humanize
+import lzma
+from tqdm import tqdm
+
+from xzhelpers import xz_get_uncompressed_size
+import helpers
+from helpers import clear_screen
 
 def sigint_handler(signum, frame):
     #print(f'Signal handler called with signal {signum}')
@@ -54,12 +59,6 @@ class HaosInstallConfig:
         self.source_image = ""
 
         self.source_image_version = ""
-        
-        """
-        If true, install-haos will modify the system's boot priority to automatically boot to HAOS.
-        Uses 'efibootmgr'.
-        """
-        self.system_efi_update_boot_priority = False
 
 
 class LinuxDiskObject:
@@ -69,9 +68,53 @@ class LinuxDiskObject:
         self.size = "" # ex. 500GB
 
 
-def boot_entry_label_validation(answers, current):
-    if not re.match(r"^[a-zA-Z0-9 ]{1,16}$", current):
-        raise inquirer.errors.ValidationError("", reason="The name can only have alphanumeric characters, underscores and spaces, and can't be longer than 16 characters.")
+def fail_catastrophically(error_message):
+    print(f"""{Fore.RED}\
+!!! Whoops! Something catastrophic happened, and the installation cannot continue.
+!!! The installer failed with the following error:
+    {error_message}
+!!! The installer needs to restart.\
+""")
+    input("Press Enter to restart the installer...")
+    exit(1)
+
+
+def install_haos(image_xz_path, target_drive):
+    dev_path = f'/dev/{target_drive}'
+    #print()
+    # Determine uncompressed image size
+    #print("Determining transfer size... ", end="", flush=True)
+    uncompressed_size_in_bytes = xz_get_uncompressed_size(image_xz_path)
+    #print(humanize.naturalsize(uncompressed_size_in_bytes, helpers.use_binary_size))
+
+    print()
+    print(f"Writing image to {dev_path}...")
+
+    # Create our progress bar
+    progress_bar = tqdm(
+        total=uncompressed_size_in_bytes, 
+        unit='iB', 
+        unit_scale=True,
+        desc="Writing image",
+        ascii=' -\\|/-#',
+        #ascii=' >=',
+        smoothing=0.0 # 0=average, 1=exact
+        )
+    
+    chunk_size_mb = 4
+    chunk_size_bytes = 1000*1000*chunk_size_mb  # bytes
+    with open(f"{dev_path}", "wb") as disk_writer:
+        with lzma.open(image_xz_path, 'rb') as xz_in:
+            while True:
+                chunk = xz_in.read(chunk_size_bytes)
+                if not chunk:
+                    break
+                disk_writer.write(chunk)
+                progress_bar.update(len(chunk))
+    progress_bar.close()
+    print()
+    print("Done writing image")
+    print()
     return True
 
 
@@ -100,36 +143,6 @@ def get_disks():
 
 def print_error(message):
     print(f"{Fore.RED}{message}{Fore.RESET}")
-
-
-### TODO: This function needs to be tested on physical hardware. It may or may not result in duplicate boot entries.
-def create_efi_boot_entry(drive_name: str, boot_entry_label: str):
-    loader_path = '\\EFI\\BOOT\\bootx64.efi'
-
-    print(f"{Fore.CYAN}Adding EFI boot entry for {drive_name} named \"{boot_entry_label}\"")
-
-    #os.system(f"efibootmgr --create --disk /dev/{drive_name} --part 1 --label \"{boot_entry_label}\" --loader {loader_path}")
-    try:
-        args = [
-            'efibootmgr',  # The command to run
-            '--create',  # Create a new boot entry...
-            f'-d /dev/{drive_name}',  # ...for this drive
-            '-p 1',  # The partition of the drive where the boot loader (ex. bootx64.efi) is located
-            f'--label "{boot_entry_label}"',  # The name that the boot entry should have in your EFI
-            f'--loader {loader_path}'  # The path to the boot loader (.efi) file
-        ]
-        print(args)
-        subprocess.run(args, shell=True, check=True)
-        return True
-    except subprocess.CalledProcessError as e:
-        print(f"{Fore.RED}Failed to create boot entry!")
-        print(f"'efibootmgr': subprocess failed with error code {e.returncode}")
-        #print(f"output: \n{e.output}")
-        return False
-
-
-def clear_screen():
-    os.system('clear')
 
 
 if __name__ == "__main__":
@@ -171,42 +184,31 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
 {Fore.RESET}""")
 
 
+    print("""\
+Choose the disk you would like to install Home Assistant OS onto.
+Try using an SSD to get the best speeds and performance.
+
+Please note that USB devices are strongly discouraged for reliability
+and speed reasons.
+
+The selected device will be completely erased for the installation.
+""")
+
     disks = get_disks()
     disk_choices = []
     for disk in disks:
         disk_choices.append(f"{disk.name} - {disk.model} [{disk.size}]")
 
-    disk_selection_question = inquirer.List('disk',
+    questions = [
+        inquirer.List('disk',
                     message="What disk do you want to install to?",
                     choices=disk_choices,
                     carousel=True
                     )
-    questions = [
-      disk_selection_question,
-      inquirer.List('create_boot_entry',
-                    message="Would you like to create a custom boot entry?",
-                    choices=['Yes', 'No'],
-                    default='Yes',
-                    carousel=True
-                    ),
-    ] if enable_feature_add_boot_entry == True else [
-      disk_selection_question
     ]
 
     try:
       answers = inquirer.prompt(questions, raise_keyboard_interrupt=True)
-      
-      if enable_feature_add_boot_entry:
-        if answers['create_boot_entry'] == "Yes":
-            additional_question = [
-                inquirer.Text('boot_entry_name',
-                        message="Name the boot entry",
-                        default="Home Assistant",
-                        validate=boot_entry_label_validation
-                        ),
-            ]
-            additional_answer = inquirer.prompt(additional_question)
-            answers.update(additional_answer)
           
     except:
         print_error("Cancelled")
@@ -222,7 +224,7 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
     target_disk_answer = answers['disk'].split()[0]
     selected_disk = find_disk_in_array_by_name(disks, target_disk_answer)
     if selected_disk == None:
-        print_error("Whoops! We ran into a catastrophic error!\nSetup can't continue. Please restart the installer.\nYou can use the 'start-installer' command.\n")
+        fail_catastrophically("The disk that was previously selected couldn't be found or doesn't match.")
     install_config.target_disk = selected_disk.name
 
 
@@ -243,15 +245,9 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
     print("Okay!")
     print()
 
-    # Start writing the image to the selected disk using the DD command
-    print(f"{Fore.CYAN}Writing image to {install_config.target_disk}{Fore.RESET}")
-
-    os.system(f"xzcat {install_config.source_image} | sudo dd of=/dev/{install_config.target_disk} bs=4M status=progress")
+    # Write the image to the selected disk
+    install_haos(install_config.source_image, install_config.target_disk)
     
-    if enable_feature_add_boot_entry:
-        if answers['create_boot_entry'] == 'Yes':
-            create_efi_boot_entry(drive_name=install_config.target_disk, boot_entry_label=answers['boot_entry_name'])
-        
     print()
     print(f"{Fore.GREEN}Installation complete!{Fore.RESET}")
     questions = [
