@@ -23,6 +23,8 @@ haos-installer-amd64.files
 haos-installer-amd64.packages
 haos-installer-amd64.iso
 haos-installer-amd64.contents
+out
+out/
 
 *.files
 *.packages
