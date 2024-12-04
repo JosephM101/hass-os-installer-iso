@@ -1,11 +1,11 @@
 # hass-os-installer-iso
 ### The (unofficial) Home Assistant OS Installer!
 
-A simple live ISO image based on `debian-bookworm` to quickly install Home Assistant OS onto x86_64-generic machines.
+A simple live system based on `debian-bookworm` to quickly install Home Assistant OS onto `x86_64-generic` targets.
 
-This image only supports AMD64 systems with UEFI bootloaders. These aren't my requirements; they are requirements imposed by Home Assistant OS.
+This live system only supports *AMD64* systems with *UEFI* bootloaders. These are the system requirements for Home Assistant OS, and therefore they are the requirements here.
 
-The image is built using `live-build`, which is a system for creating customized live Debian-based images.
+The image is built using `live-build`, which is a system for creating customized Debian-based live images.
 
 <b>NOTE: This project is still in development. As such, ISO images will not be published in Releases and will need to be [built manually](#Build). An Actions workflow will soon be available once autonomous builds are possible.</b>
 
