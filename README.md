@@ -66,7 +66,7 @@ There are two methods for building. The first method requires that you are on a 
 ## Building on a Debian-based system
 This repository uses the [`just`](https://github.com/casey/just) command runner, which will need to be installed on your host system. `just` is a command runner like `make`, however is much simpler and was much more attractive for my use cases.
 
-> I would recommend against installing `just` from Debian's repositories. At the time of writing, it is several versions behind current.
+> I would recommend against installing the `just` package from Debian's repositories. At the time of writing, it is several versions behind.
 
 To install `just` on your system, you can run the following commands:
 
