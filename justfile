@@ -1,6 +1,7 @@
 set export  # Export the above defined variables to the current environment, for use by the build scripts
 
 qemu_test_disk_filename := "test-disk.qcow2"
+build_config_filename := "build-config"
 
 # Formulas
 default:
@@ -11,10 +12,26 @@ install-depends:
     sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build debian-archive-keyring -y
 
 
+[private]
+check-build-config:
+    #!/bin/bash
+    echo -n "Checking $build_config_filename... "
+    if [ ! -e $build_config_filename ]; then
+        echo "Could not find $build_config_filename"
+        exit 1
+    fi
+    echo "ok"
+
+
+[private]
+check-live-build:
+    python3 tools/check-live-build.py
+
+
 build-default: clean build
 
 
-build:
+build: check-live-build check-build-config
     lb config
     sudo lb build
 
@@ -50,6 +67,7 @@ build:
     #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
 
 
+[private]
 [confirm("This recipe will download, compile and install live-build from source (this is useful if the version offered by your distro is old).\n\nThe source will be downloaded and built within your home folder. It will remain, should you choose to uninstall it (sudo make uninstall).\nSome required build dependencies will be installed in order to continue (git, po4a, debhelper-compat, devscripts).\n\nWould you like to continue? [y/N]")]
 install-livebuild-from-source:
     internal-build-livebuild-from-source
@@ -70,8 +88,3 @@ internal-build-livebuild-from-source:
     git clone https://salsa.debian.org/live-team/live-build.git live-build
     cd live-build
     dpkg-buildpackage -b -uc -us
-
-[private]
-internal-install-livebuild:
-    #!/usr/bin/env python
-    import os
