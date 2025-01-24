@@ -79,7 +79,7 @@ def fail_catastrophically(error_message):
     exit(1)
 
 # Instead of calling "dd", I've written a function that manually unpacks the IMG file and writes its contents directly to the selected disk.
-# This way, we have more control over the writing process, and can keep track of things like progress.
+# In addition to saving us a separate "uncompress" step, we have more control over the writing process, and can keep track of things like progress.
 def install_haos(image_xz_path, target_drive):
     dev_path = f'/dev/{target_drive}' # The drive to write the image to
 
@@ -114,13 +114,14 @@ def install_haos(image_xz_path, target_drive):
 
     # Open a write-byte stream to the disk
     with open(f"{dev_path}", "wb") as disk_writer:
-        with lzma.open(image_xz_path, 'rb') as xz_in:  # Open a stream to the xz archive containing the Home Assistant image.
+        with lzma.open(image_xz_path, 'rb') as xz_in:  # Open a read-byte stream to the compressed OS image. 
+                                                       # LZMA will decompress it on-the-fly and give us the raw bytes.
             while True:
-                chunk = xz_in.read(chunk_size_bytes) # Read a single chunk into memory
+                chunk = xz_in.read(chunk_size_bytes)  # Read a single chunk into memory
                 if not chunk:  # If we have no more data to read
                     break
-                disk_writer.write(chunk) # Write the chunk to the disk
-                progress_bar.update(len(chunk)) # Update the progress bar
+                disk_writer.write(chunk)  # Write the chunk to the disk
+                progress_bar.update(len(chunk))  # Update the progress bar
 
     # We're done writing at this point...
     progress_bar.close()
@@ -129,26 +130,28 @@ def install_haos(image_xz_path, target_drive):
     print()
     return True
 
-
+# Invokes the lsblk command in JSON mode (nice that it has that), and returns a filtered list of the system's internal disks
 def get_disks():
     # use lsblk to get a list of disks that can be installed to, filtering out devices such as loop and ROM devices
     disks = []
     result = subprocess.run(['lsblk', '-o', 'NAME,SIZE,MODEL,TYPE', '--json'], 
                             stdout=subprocess.PIPE, 
                             text=True)
-    json_data = json.loads(result.stdout)
-    block_devices = json_data["blockdevices"]
+    json_data = json.loads(result.stdout)  # Parse the JSON output
+    block_devices = json_data["blockdevices"]  # Get the block devices
 
+    # Iterate through all of the block devices
     for block_device in block_devices:
-        if block_device['type'] == "disk" and 'fd' not in block_device['name']:
+        if block_device['type'] == "disk" and 'fd' not in block_device['name']:  # If medium type is "disk" (and not a floppy drive)
+            # Gather information about the disk
             disk_obj = LinuxDiskObject()
-            disk_obj.name = block_device['name']
-            disk_obj.size = block_device['size']
-            if block_device['model'] and block_device['model'] != "null":
+            disk_obj.name = block_device['name']  # The block device name (eg. /dev/sda)
+            disk_obj.size = block_device['size']  # The size of the disk in bytes
+            if block_device['model'] and block_device['model'] != "null":  # If the disk has a (friendly) model name and it isn't null
                 disk_obj.model = block_device['model']
             else:
-                disk_obj.model = "UNKNOWN"
-            disks.append(disk_obj)
+                disk_obj.model = "UNKNOWN"  # We don't know the model name of the disk.
+            disks.append(disk_obj)  # Add the disk to the list
 
     return disks
 
@@ -164,8 +167,12 @@ if __name__ == "__main__":
     # Initialize colorama
     colorama_init()
 
-    signal.signal(signal.SIGINT, sigint_handler)  # Add handler to handle (and dismiss) Ctrl-C/SIGINT events
+    signal.signal(signal.SIGINT, sigint_handler)  # Add handler to handle (and dismiss) Ctrl-C/SIGINT events. 
+                                                  # TODO: Expand on this; pause writing and ask the user what they want to do if break is pressed
 
+    # Open the text file "/haos-image/imagename" and read it. 
+    # This file contains the name of the Home Assistant image file, and is created by the build script that builds the ISO image.
+    # I probably didn't need to do it this way. But it gives us the ability to know the version we're installing since it's in the image's filename.
     with open('/haos-image/imagename', 'r') as file:
         imagename = file.read().rstrip()
         install_config.source_image = f"/haos-image/{imagename}"
@@ -174,12 +181,12 @@ if __name__ == "__main__":
             # Get the version of the HAOS image
             sleep(0.5)
 
-    clear_screen()
+    clear_screen()  # Clear the console
 
-    print(home_assistant_ascii_art_minimalist)
+    print(home_assistant_ascii_art_minimalist)  # Draw the ASCII art
     for _ in range(0,2):
         print()
-    print("Welcome to the (unofficial) Home Assistant OS Installer!")
+    print("Welcome to the (unofficial) Home Assistant OS Installer!")  # Greet the user!
 
     print()
 
