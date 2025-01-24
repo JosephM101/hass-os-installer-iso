@@ -96,7 +96,7 @@ If you have QEMU installed and would like to test the resulting ISO image, you c
 
     just run-qemu
 
-You can also specify multiple recipes to run. To do a clean build, run:
+You can also specify multiple recipes to run, and they will be executed sequentially; one after the other. To do a clean build, run:
 
     just clean build
 
