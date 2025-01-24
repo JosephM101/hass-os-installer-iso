@@ -67,10 +67,10 @@ class LinuxDiskObject:
         self.model = "" # ex. Samsung SSD 850 EVO
         self.size = "" # ex. 500GB
 
-
+# If the installer script runs into an error that we can't recover from, we'll call this function.
 def fail_catastrophically(error_message):
     print(f"""{Fore.RED}\
-!!! Whoops! Something catastrophic happened, and the installation cannot continue.
+!!! Whoops! We ran into a situation that we can't recover from. The installation cannot continue.
 !!! The installer failed with the following error:
     {error_message}
 !!! The installer needs to restart.\
@@ -78,19 +78,28 @@ def fail_catastrophically(error_message):
     input("Press Enter to restart the installer...")
     exit(1)
 
-
+# Instead of calling "dd", I've written a function that manually unpacks the IMG file and writes its contents directly to the selected disk.
+# This way, we have more control over the writing process, and can keep track of things like progress.
 def install_haos(image_xz_path, target_drive):
-    dev_path = f'/dev/{target_drive}'
-    #print()
+    dev_path = f'/dev/{target_drive}' # The drive to write the image to
+
+    # Our chunk size is the amount of data that we'll read and write at a time. Rather than read and write each byte, one after the other (which would be slow), 
+    # we will read chunks of the data at a time, and write those chunks to the target disk. Much faster than the byte-by-byte method.
+    # In my testing, 4MB was adequate for transfer speed.
+    # This value will get converted to "bytes" later, and *that* value is what will be used. See "chunk_size_bytes" below.
+    chunk_size_mb = 4
+
+    # -----------------------
     # Determine uncompressed image size
     #print("Determining transfer size... ", end="", flush=True)
     uncompressed_size_in_bytes = xz_get_uncompressed_size(image_xz_path)
     #print(humanize.naturalsize(uncompressed_size_in_bytes, helpers.use_binary_size))
 
+    # Tell the user what we're doing
     print()
     print(f"Writing image to {dev_path}...")
 
-    # Create our progress bar
+    # Create a progress bar using TQDM. We'll use it to indicate transfer progress.
     progress_bar = tqdm(
         total=uncompressed_size_in_bytes, 
         unit='iB', 
@@ -100,17 +109,20 @@ def install_haos(image_xz_path, target_drive):
         #ascii=' >=',
         smoothing=0.0 # 0=average, 1=exact
         )
-    
-    chunk_size_mb = 4
-    chunk_size_bytes = 1000*1000*chunk_size_mb  # bytes
+
+    chunk_size_bytes = 1000*1000*chunk_size_mb  # Convert chunk_size_mb to bytes and store it. This is what we'll actually use.
+
+    # Open a write-byte stream to the disk
     with open(f"{dev_path}", "wb") as disk_writer:
-        with lzma.open(image_xz_path, 'rb') as xz_in:
+        with lzma.open(image_xz_path, 'rb') as xz_in:  # Open a stream to the xz archive containing the Home Assistant image.
             while True:
-                chunk = xz_in.read(chunk_size_bytes)
-                if not chunk:
+                chunk = xz_in.read(chunk_size_bytes) # Read a single chunk into memory
+                if not chunk:  # If we have no more data to read
                     break
-                disk_writer.write(chunk)
-                progress_bar.update(len(chunk))
+                disk_writer.write(chunk) # Write the chunk to the disk
+                progress_bar.update(len(chunk)) # Update the progress bar
+
+    # We're done writing at this point...
     progress_bar.close()
     print()
     print("Done writing image")
