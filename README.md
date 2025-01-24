@@ -13,23 +13,23 @@ The image is built using `live-build`, which is a system for creating customized
 ## How to use
 Like any other ISO file, you can write it to a USB drive using balenaEtcher or Rufus, or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
 
-> Personally, I like using [Ventoy](https://www.ventoy.net/en/index.html) on my USB drives because it allows me to store multiple bootable ISO files on a single flash drive without needing to reformat.
+> Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat every time.
 
-Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm and verify your selection. Once you have confirmed the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot or shut down your machine.
+Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
 
 
 ## Why?
-I wanted to install Home Assistant OS onto a VM on my Fedora Server, and it took many more steps than I would've otherwise liked. To remedy this, I created a simple and straightforward CLI app and a small Debian-based live image surrounding it, eliminating the need to use something like a live Ubuntu installation and the `dd` command to install Home Assistant OS onto a drive.
+I wanted to install Home Assistant OS onto a VM on my Fedora Server, and it took many more steps than I would've otherwise liked. To remedy this, I wrote a simple and straightforward CLI app in Python and wrapped it with a minimal Debian live enivronment, eliminating the need to use something like a live Ubuntu environment and the `dd` command to install Home Assistant OS onto a drive.
 
 I created this project with the goal of creating a small, simple and straightforward-to-use bootable installer. It has helped me in deploying Home Assistant OS, and I hope that it helps someone else :)
 
 
 ## Warnings
-I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. To that end, please make sure that you disconnect any drives in your target system that contain data you wouldn't want to lose. I wrote the installer in such a way that this should not happen, but "should not" does not mean "never". Better safe than sorry!
+I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. If it makes you feel better, you can disconnect from your target system any drives that contain data you wouldn't want to lose. I wrote the installer in such a way that accidental data wiping should not happen, but "should not" does not mean "never". Better safe than sorry!
 
 
 ## The project structure
-Everything you'll want to see and/or modify that has to do with customizing the Debian system can be found in the `config/` and `auto/` directories at the root of the repository. Take a gander into the `config/includes.chroot/bin` directory, and you'll find the Python-based CLI installer script that gets automatically launched on `tty1` when the image boots up. Keep on reading to find out how!
+Everything you'll want to see and/or modify that has to do with customizing the Debian system can be found in the `config/` and `auto/` directories at the root of the repository. Dive into the `config/includes.chroot/bin` directory, and you'll find the Python-based CLI installer script that gets automatically launched on `tty1` when the Debian image boots up. Keep on reading to find out how!
 
 <b>Hook scripts</b> are scripts that are automatically executed during the build process. They are used to do things such as download the HAOS image and set up auto-start for the installer. They can be found in `config/hooks/live`. All hook scripts are helpfully named based on what they do. For more information about how hook scripts work, [check out the customizing-contents section of debian-live's manual.](https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-contents.en.html)
 > Some hooks are marked as `.chroot-disabled` becuase they aren't needed and this prevents them from running. Rather than delete them (I may want them for future reference), I simply renamed them.
