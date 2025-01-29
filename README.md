@@ -16,7 +16,8 @@ Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher]
 
 > Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat for a different operating system every time.
 
-Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
+Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed that you would like to continue with the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
+> I may, in the future, add the ability to download the latest version of Home Assistant OS from the internet directly from the installer. This may be offered in the form of a separate ISO image labeled "netinstall", or the feature would be included in the main ISO.
 
 
 ## Why?
@@ -69,7 +70,7 @@ This repository uses the [`just`](https://github.com/casey/just) command runner,
 
 > I would recommend against installing the `just` package from Debian's repositories. At the time of writing, it is several versions behind.
 
-To install `just` on your system, you can run the following commands:
+To install `just` on your system, you can run the following commands (`bash` is assumed):
 
     # create ~/bin
     mkdir -p ~/bin
@@ -82,14 +83,14 @@ To install `just` on your system, you can run the following commands:
     # e.g. `~/.bashrc` or `~/.zshrc`
     export PATH="$PATH:$HOME/bin"
 
-If you have the Rust toolchain installed, alternatively you can run:
+If you have the Rust toolchain and Cargo installed, alternatively you can run:
 
     cargo install just
 
 
 
 ### Run the build
-In the repository directory, run the following command to start the build:
+In the repository directory, run the following command to start building the ISO:
 
     just build
 
@@ -108,7 +109,7 @@ Vagrant works by spinning up a Linux virtual machine, running the build inside o
 
 This repository ships with a Vagrantfile in the top-most directory that contains a modified build script that builds the image.
 
-<b>NOTE: Currently, this method only supports AMD64 systems.</b>
+<b>NOTE: This method requires an AMD64 host system.</b>
 
 
 ### Step 1: Install Vagrant
