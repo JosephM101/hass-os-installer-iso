@@ -7,7 +7,7 @@ This live system only supports *AMD64* systems with *UEFI* bootloaders. These ar
 
 The image is built using `live-build`, which is a system for creating customized Debian-based live images.
 
-<b>NOTE: This project is still in development. As such, ISO images will not be published in Releases and will need to be [built manually](#Build). An Actions workflow will soon be available once autonomous builds are possible. Contributions in the form of pull requests are welcome!</b>
+<b>NOTE: This project is still in development. As such, ISO images will not be published in Releases and will need to be [built manually](#Build). An Actions workflow will soon be available once consistent, autonomous builds are possible. Contributions in the form of pull requests are welcome!</b>
 
 <hr></hr>
 
