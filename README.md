@@ -21,7 +21,7 @@ Once you have booted the installer, you will be asked to choose from a list the 
 
 
 ## Why?
-I wanted to install Home Assistant OS onto a VM on my Fedora Server, and it took many more steps than I would've otherwise liked. To remedy this, I wrote a simple and straightforward CLI app in Python and wrapped it with a minimal Debian live enivronment, eliminating the need to use something like a live Ubuntu environment and the `dd` command to install Home Assistant OS onto a drive.
+I wanted to install Home Assistant OS onto a VM on my Fedora Server, and it took many more steps than I would've otherwise liked. To remedy this, I wrote a simple and straightforward CLI app in Python and wrapped it with a minimal Debian live enivronment. Traditionally, one might use something like a live Ubuntu environment and the `dd` command to write the Home Assistant OS image onto the intended drive; a method which I would consider to not be very beginner-friendly.
 
 I created this project with the goal of creating a small, simple and straightforward-to-use bootable installer. It has helped me in deploying Home Assistant OS, and I hope that it helps someone else :)
 
