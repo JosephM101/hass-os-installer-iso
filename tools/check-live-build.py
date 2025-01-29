@@ -49,9 +49,21 @@ You may need to get it from somewhere other than your distro's package manager, 
 """)
         sys.exit(1)
 
+
 def main():
     installed_version = check_live_build_installed()
-    compare_versions(installed_version)
+
+    try:
+        compare_versions(installed_version)
+    except:
+        print()
+        print(f"{Fore.RED}live-build is installed, but the version check failed. \nIt's possible that a very old alpha version is installed, or the version code is unrecognized.{Fore.RESET}")
+        print()
+        print(f"live-build reported version: {installed_version}")
+        print(f"The version code should look like, for example, {LB_MIN_VERSION} (the minimum required version).")
+        print()
+        print("You will need to compile and install live-build from source. See https://live-team.pages.debian.net/live-manual/html/live-manual/installation.en.html for more information.")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
