@@ -7,13 +7,14 @@ This live system only supports *AMD64* systems with *UEFI* bootloaders. These ar
 
 The image is built using `live-build`, which is a system for creating customized Debian-based live images.
 
-<b>NOTE: This project is still in development. As such, ISO images will not be published in Releases and will need to be [built manually](#Build). An Actions workflow will soon be available once autonomous builds are possible.</b>
+<b>NOTE: This project is still in development. As such, ISO images will not be published in Releases and will need to be [built manually](#Build). An Actions workflow will soon be available once autonomous builds are possible. Contributions in the form of pull requests are welcome!</b>
 
+<hr></hr>
 
 ## How to use
-Like any other ISO file, you can write it to a USB drive using balenaEtcher or Rufus, or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
+Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher](https://etcher.balena.io/) or [Rufus](https://rufus.ie/en/), copy it to a drive using the [Ventoy bootloader](https://www.ventoy.net/en/index.html) (my personal favorite), or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
 
-> Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat every time.
+> Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat for a different operating system every time.
 
 Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
 
