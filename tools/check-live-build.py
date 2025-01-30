@@ -62,7 +62,7 @@ def main():
         print(f"live-build reported version: {installed_version}")
         print(f"The version code should look like, for example, {LB_MIN_VERSION} (the minimum required version).")
         print()
-        print("You will need to compile and install live-build from source. See https://live-team.pages.debian.net/live-manual/html/live-manual/installation.en.html for more information.")
+        print("You will need to compile and install live-build from source. See COMPILING-AND-INSTALLING-LIVEBUILD.md for more information.")
         sys.exit(1)
 
 if __name__ == "__main__":
