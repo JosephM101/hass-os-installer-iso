@@ -66,11 +66,13 @@ There are two methods for building. The first method requires that you are on a 
 
 
 ## Building on a Debian-based system
+
 This repository uses the [`just`](https://github.com/casey/just) command runner, which will need to be installed on your host system. `just` is a command runner like `make`, however is much simpler and was much more attractive for my use cases.
 
-> I would recommend against installing the `just` package from Debian's repositories. At the time of writing, it is several versions behind.
+> I would recommend against installing the `just` package from Debian's repositories. At the time of writing, it is several versions behind, and missing features that we need.
 
-To install `just` on your system, you can run the following commands (`bash` is assumed):
+#### Dependency: `just`
+To install `just` on your system, run the following commands (`bash` is assumed):
 
     # create ~/bin
     mkdir -p ~/bin
@@ -83,11 +85,22 @@ To install `just` on your system, you can run the following commands (`bash` is 
     # e.g. `~/.bashrc` or `~/.zshrc`
     export PATH="$PATH:$HOME/bin"
 
-If you have the Rust toolchain and Cargo installed, alternatively you can run:
+> Some shell initialization files are already set up to add `$HOME/bin` to your PATH. You can test this by opening a new terminal and running 'just'. If you get "command not found", run one of the commands below for your shell:
 
-    cargo install just
+    # for bash
+    echo 'export PATH="$PATH:$HOME/bin"' >> ~/.bashrc
+
+    # for zsh
+    echo 'export PATH="$PATH:$HOME/bin"' >> ~/.zshrc
 
 
+
+If you have the Rust toolchain and Cargo installed, alternatively you can install `just` by running:
+
+    cargo install just  # Will build the latest version, and will also automatically be included in your PATH
+
+#### Dependency: `live-build`
+Currently, the version of `live-build` included in Ubuntu's repositories is many years behind. If you are building on Ubuntu, and run into an issue with the `live-build` version check failing when running `just build`, you can compile and install from source. See [Compiling and Installing live-build](COMPILING-AND-INSTALLING-LIVEBUILD.md)
 
 ### Run the build
 In the repository directory, run the following command to start building the ISO:
