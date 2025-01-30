@@ -65,26 +65,3 @@ build: check-live-build check-build-config
     )
     qemu-system-x86_64 ${qemu_args[@]}
     #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
-
-
-[private]
-[confirm("This recipe will download, compile and install live-build from source (this is useful if the version offered by your distro is old).\n\nThe source will be downloaded and built within your home folder. It will remain, should you choose to uninstall it (sudo make uninstall).\nSome required build dependencies will be installed in order to continue (git, po4a, debhelper-compat, devscripts).\n\nWould you like to continue? [y/N]")]
-install-livebuild-from-source:
-    internal-build-livebuild-from-source
-    internal-install-livebuild
-
-
-[private]
-internal-build-livebuild-from-source:
-    #!/bin/bash
-    # Based on instructions from https://live-team.pages.debian.net/live-manual/html/live-manual/installation.en.html
-    cd ~ # Go to home directory
-    echo Will now attempt to remove any installed version of live-build.
-    sudo apt-get remove live-build -y
-    set -e
-    sudo apt-get install git po4a debhelper-compat devscripts  # Install build dependencies
-    mkdir -p livebuild-src
-    cd livebuild-src
-    git clone https://salsa.debian.org/live-team/live-build.git live-build
-    cd live-build
-    dpkg-buildpackage -b -uc -us
