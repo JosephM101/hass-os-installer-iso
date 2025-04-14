@@ -47,17 +47,21 @@ home_assistant_ascii_art_minimalist = """\
 ................   .................
 """
 
-
-
 class HaosInstallConfig:
     def __init__(self):
         """
-        The name of the disk to install to (ex. /dev/sda)
+        The name of the disk (device file) to write the image to (ex. /dev/sda)
         """
         self.target_disk = ""
 
+        """
+        The path to the image to be written
+        """
         self.source_image = ""
 
+        """
+        The version of Home Assistant OS in the image
+        """
         self.source_image_version = ""
 
 
@@ -66,6 +70,7 @@ class LinuxDiskObject:
         self.name = "" # ex. sda, sdb
         self.model = "" # ex. Samsung SSD 850 EVO
         self.size = "" # ex. 500GB
+
 
 # If the installer script runs into an error that we can't recover from, we'll call this function.
 def fail_catastrophically(error_message):
@@ -78,15 +83,16 @@ def fail_catastrophically(error_message):
     input("Press Enter to restart the installer...")
     exit(1)
 
-# Instead of calling "dd", I've written a function that manually unpacks the IMG file and writes its contents directly to the selected disk.
-# In addition to saving us a separate "uncompress" step, we have more control over the writing process, and can keep track of things like progress.
+
+# Instead of calling "dd", I chose to write a function that manually unpacks the IMG file and writes its contents directly to the selected disk.
+# In addition to saving us a separate "uncompress" step (which can use a lot of RAM that we may not have), we have more control over the writing process, and can keep track of things like progress.
 def install_haos(image_xz_path, target_drive):
     dev_path = f'/dev/{target_drive}' # The drive to write the image to
 
     # Our chunk size is the amount of data that we'll read and write at a time. Rather than read and write each byte, one after the other (which would be slow), 
     # we will read chunks of the data at a time, and write those chunks to the target disk. Much faster than the byte-by-byte method.
     # In my testing, 4MB was adequate for transfer speed.
-    # This value will get converted to "bytes" later, and *that* value is what will be used. See "chunk_size_bytes" below.
+    # This value will get converted to "bytes" later, and /that/ value is what will be used. See "chunk_size_bytes" below.
     chunk_size_mb = 4
 
     # -----------------------
@@ -112,15 +118,15 @@ def install_haos(image_xz_path, target_drive):
 
     chunk_size_bytes = 1000*1000*chunk_size_mb  # Convert chunk_size_mb to bytes and store it. This is what we'll actually use.
 
-    # Open a write-byte stream to the disk
+    # Open a write-byte stream to the disk's device file
     with open(f"{dev_path}", "wb") as disk_writer:
         with lzma.open(image_xz_path, 'rb') as xz_in:  # Open a read-byte stream to the compressed OS image. 
                                                        # LZMA will decompress it on-the-fly and give us the raw bytes.
-            while True:
+            while True:  # This function will loop until the entire image is written to the disk
                 chunk = xz_in.read(chunk_size_bytes)  # Read a single chunk into memory
                 if not chunk:  # If we have no more data to read
                     break
-                disk_writer.write(chunk)  # Write the chunk to the disk
+                disk_writer.write(chunk)  # Write the data chunk to the disk
                 progress_bar.update(len(chunk))  # Update the progress bar
 
     # We're done writing at this point...
@@ -129,6 +135,7 @@ def install_haos(image_xz_path, target_drive):
     print("Done writing image")
     print()
     return True
+
 
 # Invokes the lsblk command in JSON mode (nice that it has that), and returns a filtered list of the system's internal disks
 def get_disks():
@@ -160,8 +167,9 @@ def print_error(message):
     print(f"{Fore.RED}{message}{Fore.RESET}")
 
 
+# Main function
 if __name__ == "__main__":
-    be_a_nag = True  # Do we want to ask the user twice before continuing?
+    be_a_nag = True  # At the drive selection menu, do we want to ask the user twice if their selection is correct?
     install_config: HaosInstallConfig = HaosInstallConfig()
     
     # Initialize colorama
@@ -196,7 +204,7 @@ if __name__ == "__main__":
     # print(f"System has {total_system_memory.to_MB()} of total RAM")
     if total_system_memory_mb < 4000:
         print(f"""{Fore.YELLOW}\
-WARNING: Your system has less than 4 GB of RAM. At least 8 GB is recommended for stable operation.
+WARNING: Your system has less than 4 GB of RAM. At least 8 GB is recommended for HAOS.
 You may run into stability problems with multiple addons.
               
 Your system has {round(total_system_memory_mb)} MB of RAM.
@@ -205,7 +213,7 @@ Your system has {round(total_system_memory_mb)} MB of RAM.
 
     print("""\
 Choose the disk you would like to install Home Assistant OS onto.
-Try using an SSD to get the best speeds and performance.
+For best results, use an SSD.
 
 Please note that USB devices are strongly discouraged for reliability
 and speed reasons.
@@ -213,6 +221,7 @@ and speed reasons.
 The selected device will be completely erased for the installation.
 """)
 
+    # Get list of available disks to install to
     disks = get_disks()
     disk_choices = []
     for disk in disks:
@@ -228,7 +237,6 @@ The selected device will be completely erased for the installation.
 
     try:
       answers = inquirer.prompt(questions, raise_keyboard_interrupt=True)
-          
     except:
         print_error("Cancelled")
         exit(1)
@@ -239,7 +247,7 @@ The selected device will be completely erased for the installation.
           return disk
       return None
 
-    # Retrieve the disk info from the collection based on the selection.
+    # Retrieve the disk info from the collection based on the user's selection.
     target_disk_answer = answers['disk'].split()[0]
     selected_disk = find_disk_in_array_by_name(disks, target_disk_answer)
     if selected_disk == None:
@@ -252,11 +260,13 @@ The selected device will be completely erased for the installation.
     print()
     #print(f"It is recommended before installing that any disks you don't want to touch are removed, should something unexpected happen.")
     warning_message = f"ALL data on {install_config.target_disk} - {selected_disk.model} will be ERASED! Are you sure you want to continue?"
+    # Show the confirmation message
     first_warning_result = click.confirm(f"{Fore.YELLOW}{warning_message}{Fore.RESET}")
     if first_warning_result == False:
         exit(1)
     print()
     if be_a_nag:
+        # Repeat the confirmation message
         nag_warning_result = click.confirm(f"{Fore.YELLOW}{Style.BRIGHT}LAST WARNING!!!{Style.RESET_ALL}\n{Fore.YELLOW}{warning_message}{Fore.RESET}")
         if nag_warning_result == False:
             exit(1)
@@ -286,8 +296,8 @@ The selected device will be completely erased for the installation.
         os.system("sudo reboot now")
         print()
     else:
+        print("Shutting down now...")
         os.system("sudo shutdown now")
-        print("Shutting down...")
         print()
 
 

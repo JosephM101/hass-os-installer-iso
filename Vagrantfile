@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
 
       # Install casey/just (https://github.com/casey/just)
       mkdir -p ~/bin
-      curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin  # Download the prebuilt "just" binary into ~/bin
+      curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin  # Download the latest prebuilt "just" binary into ~/bin
       export PATH="$PATH:$HOME/bin" # Add ~/bin to PATH so that we can run "just"
 
 
@@ -48,11 +48,11 @@ Vagrant.configure("2") do |config|
         cd live-build
         
         echo ""
-        echo "Compile live-build"
+        echo " >> Compile live-build"
         dpkg-buildpackage -b -uc -us
 
         echo ""
-        echo "Install live-build"
+        echo " >> Install live-build"
         cd ..
         find . -name "*.deb" -print0 | xargs -0 dpkg -i # Install live-build deb
       }
