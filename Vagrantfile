@@ -57,7 +57,7 @@ Vagrant.configure("2") do |config|
         find . -name "*.deb" -print0 | xargs -0 dpkg -i # Install live-build deb
       }
 
-      # Uncomment the line below if you encounter issues with live-build (eg. the shipped version is broken, out-of-date or doesn't support something we need)
+      # Uncomment the line below if you encounter issues with the repository version of live-build (eg. the shipped version is broken, out-of-date or doesn't support something we need)
       # This will build and install live-build from source, rather than use the one provided by Debian's repos.
       #build_and_install_livebuild
 

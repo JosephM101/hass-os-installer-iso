@@ -3,7 +3,7 @@
 
 A simple live system based on `debian-bookworm` to quickly install Home Assistant OS onto `x86_64-generic` targets.
 
-This live system only supports *AMD64* systems with *UEFI* bootloaders. These are the system requirements for Home Assistant OS, and therefore they are the requirements here.
+This live system only supports *AMD64* systems with *UEFI* bootloaders. These are the system requirements for the Home Assistant OS (amd64), and therefore they are the requirements here.
 
 The image is built using `live-build`, which is a system for creating customized Debian-based live images.
 
@@ -16,22 +16,22 @@ Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher]
 
 > Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat for a different operating system every time.
 
-Once you have booted the installer, you will be asked to choose from a list the disk where you want to install Home Assistant. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed that you would like to continue with the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
-> I may, in the future, add the ability to download the latest version of Home Assistant OS from the internet directly from the installer. This may be offered in the form of a separate ISO image labeled "netinstall", or the feature would be included in the main ISO.
+Once you have booted the installer, you will be asked to choose the disk where you want to install Home Assistant from a list. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed that you would like to continue with the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
+> I may, in the future, add the ability to download the latest version of Home Assistant OS from the internet directly from the installer. This may be offered in the form of a separate ISO image labeled "netinstall", but the feature could also be included in the main ISO.
 
 
 ## Why?
 I wanted to install Home Assistant OS onto a VM on my Fedora Server, and it took many more steps than I would've otherwise liked. To remedy this, I wrote a simple and straightforward CLI app in Python and wrapped it with a minimal Debian live enivronment. Traditionally, one might use something like a live Ubuntu environment and the `dd` command to write the Home Assistant OS image onto the intended drive; a method which I would consider to not be very beginner-friendly.
 
-I created this project with the goal of creating a small, simple and straightforward-to-use bootable installer. It has helped me in deploying Home Assistant OS, and I hope that it helps someone else :)
+I created this project with the goal of creating a small, simple and straightforward-to-use bootable installer that automates as much as reasonably possible. It has helped me in deploying Home Assistant OS, and I hope that it helps someone else :)
 
 
 ## Warnings
-I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. If it makes you feel better, you can disconnect from your target system any drives that contain data you wouldn't want to lose. I wrote the installer in such a way that accidental data wiping should not happen, but "should not" does not mean "never". Better safe than sorry!
+I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. If you'd like to go the extra mile, you can disconnect/remove from your target system any drives that contain data you wouldn't want to lose. I wrote the installer in such a way that accidental data wiping should not happen, but "should not" does not mean "never". Better safe than sorry!
 
 
 ## The project structure
-Everything you'll want to see and/or modify that has to do with customizing the Debian system can be found in the `config/` and `auto/` directories at the root of the repository. Dive into the `config/includes.chroot/bin` directory, and you'll find the Python-based CLI installer script that gets automatically launched on `tty1` when the Debian image boots up. Keep on reading to find out how!
+Everything you'll want to see and/or modify that has to do with customizing the Debian system can be found in the `config/` and `auto/` directories at the root of the repository. Go into the `config/includes.chroot/bin` directory, and you'll find the Python-based CLI installer script that gets automatically launched on `tty1` when the Debian image boots up. Keep on reading to find out how!
 
 <b>Hook scripts</b> are scripts that are automatically executed during the build process. They are used to do things such as download the HAOS image and set up auto-start for the installer. They can be found in `config/hooks/live`. All hook scripts are helpfully named based on what they do. For more information about how hook scripts work, [check out the customizing-contents section of debian-live's manual.](https://live-team.pages.debian.net/live-manual/html/live-manual/customizing-contents.en.html)
 > Some hooks are marked as `.chroot-disabled` becuase they aren't needed and this prevents them from running. Rather than delete them (I may want them for future reference), I simply renamed them.
@@ -117,12 +117,12 @@ You can also specify multiple recipes to run, and they will be executed sequenti
 
 
 
-## Building with Vagrant
-Vagrant works by spinning up a Linux virtual machine, running the build inside of it, and then copying the build artifacts (in this case, the final ISO) to your host system. This allows the build process to be cross-platform. And here's the best part: installing dependencies and such are all handled for you in this method.
+## Building with Vagrant (recommended)
+The [Vagrant](https://www.vagrantup.com/) method works by spinning up a Linux virtual machine, running the build scripts inside of it, and then copying the build artifacts (in this case, the final ISO) to your host system. This allows the build process to be cross-platform. And here's the best part: installing dependencies and such are all handled for you in this method.
 
 This repository ships with a Vagrantfile in the top-most directory that contains a modified build script that builds the image.
 
-<b>NOTE: This method requires an AMD64 host system.</b>
+<b>NOTE: This method requires an AMD64 host system with VirtualBox installed. Other providers are available, but I have not tested them.</b>
 
 
 ### Step 1: Install Vagrant
