@@ -61,11 +61,11 @@ This variable is also used to name the ISO and the GRUB boot entry, among other 
 ### How to build
 There are two methods for building. The first method requires that you are on a Debian-based distro (I used Linux Mint 21 Wilma in testing). The second method requires that you have [Vagrant](https://developer.hashicorp.com/vagrant/install) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed, and works on Linux, Windows and macOS.
 
-- [Build on a Debian-based system or container](#building-on-a-debian-based-system)
+- [Build on a Debian-based system](#building-on-a-debian-based-system)
 - [Build using Vagrant](#building-with-vagrant)
 
 
-## Building on a Debian-based system (or using a Debian container in [Distrobox](https://distrobox.it/))
+## Building on a Debian-based system
 
 This repository uses the [`just`](https://github.com/casey/just) command runner, which will need to be installed on your host system. `just` is a command runner like `make`, however is much simpler and was much more attractive for my use cases.
 
