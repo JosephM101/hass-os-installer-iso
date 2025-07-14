@@ -57,12 +57,12 @@ def main():
         compare_versions(installed_version)
     except:
         print()
-        print(f"{Fore.RED}live-build is installed, but the version check failed. \nIt's possible that a very old alpha version is installed, or the version code is unrecognized.{Fore.RESET}")
+        print(f"{Fore.RED}live-build is installed, but the version check failed. \nIt's possible that a super-old alpha version is installed, or the version code is unrecognized.{Fore.RESET}")
         print()
         print(f"live-build reported version: {installed_version}")
-        print(f"The version code should look like, for example, {LB_MIN_VERSION} (the minimum required version).")
+        print(f"At least live-build version {LB_MIN_VERSION} is required.")
         print()
-        print("You will need to compile and install live-build from source. See COMPILING-AND-INSTALLING-LIVEBUILD.md for more information.")
+        print("If the version of live-build in your distro's repositories are too old, you will need to compile and install from source. See COMPILING-AND-INSTALLING-LIVEBUILD.md for more information.")
         sys.exit(1)
 
 if __name__ == "__main__":
