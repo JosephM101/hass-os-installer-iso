@@ -65,7 +65,7 @@ There are two methods for building. The first method requires that you are on a 
 - [Build using Vagrant](#building-with-vagrant)
 
 
-## Building on a Debian-based system
+## Building on a Debian-based system (or using a Debian container in [Distrobox](https://distrobox.it/))
 
 This repository uses the [`just`](https://github.com/casey/just) command runner, which will need to be installed on your host system. `just` is a command runner like `make`, however is much simpler and was much more attractive for my use cases.
 
@@ -161,3 +161,12 @@ This will destroy the virtual machine, but won't delete the box that was downloa
 If you want to delete the box and reclaim disk space, run the following command:
 
     vagrant box remove
+
+<hr>
+
+## Roadmap
+
+- [x] Make installer functional (Home Assistant OS is installed to internal drive)
+- [ ] Move to using TOML for build definitions
+- [ ] Streamline build process (and make it less janky)
+- [ ] Add action for automatically building new images when new versions of HAOS are released
