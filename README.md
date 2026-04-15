@@ -46,7 +46,7 @@ Well, despite how capable <i>live-build</i> is, without editing its source code 
 
 ## Build
 
-### Update the build-config file
+### Configure parameters in the build-config file
 Environment variables for the build process are stored in the `build-config` file at the root of the directory and are sourced by various scripts, such as those in the `auto/` directory. 
 
 Change the value of `CFG_HAOS_VERSION` to the version of the Home Assistant OS that you want to include in your resulting image (ex. 12.4). Realistically you would change this value to be the latest version. You can get the version number of the latest release from the [Home Assistant OS GitHub page](https://github.com/home-assistant/operating-system/releases/latest).
