@@ -59,7 +59,7 @@ This variable is also used to name the ISO and the GRUB boot entry, among other 
 <i>(A way to automatically retrieve and update this information will hopefully be coming soon)</i>
 
 ### How to build
-There are two methods for building. The first method requires that you are on a Debian-based distro (I used Linux Mint 21 Wilma in testing). The second method requires that you have [Vagrant](https://developer.hashicorp.com/vagrant/install) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed, and works on Linux, Windows and macOS.
+There are two methods for building. The first method requires that you use a Debian-based distro (I used Linux Mint 21 "Wilma" in testing). The second method requires that you have [Vagrant](https://developer.hashicorp.com/vagrant/install) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads) installed, and it works on Linux, Windows and macOS.
 
 - [Build on a Debian-based system](#building-on-a-debian-based-system)
 - [Build using Vagrant](#building-with-vagrant)
