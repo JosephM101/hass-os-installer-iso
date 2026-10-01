@@ -12,7 +12,7 @@ The image is built using `live-build`, which is a system for creating customized
 <hr></hr>
 
 ## How to use
-Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher](https://etcher.balena.io/) or [Rufus](https://rufus.ie/en/), copy it to a drive with the [Ventoy bootloader](https://www.ventoy.net/en/index.html) installed (my personal favorite), or optionally burn it to a CD (it's small enough!). If you're deploying to a virtual machine, you can mount it like any other ISO.
+Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher](https://etcher.balena.io/) or [Rufus](https://rufus.ie/en/), copy it to a drive with the [Ventoy bootloader](https://www.ventoy.net/en/index.html) installed (my personal favorite), or optionally burn it to a DVD. If you're deploying to a virtual machine, you can mount it like any other ISO.
 
 > Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat for a different operating system every time.
 
