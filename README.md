@@ -27,7 +27,7 @@ I created this project with the goal of creating a small, simple and straightfor
 
 
 ## Warnings
-I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. If you'd like to go the extra mile, you can disconnect/remove from your target system any drives that contain data you wouldn't want to lose. I wrote the installer in such a way that accidental data wiping should not happen, but "should not" does not mean "never". Better safe than sorry!
+I can't gurantee that this script is foolproof, and am not responsible for lost data. You are given two warnings before you wipe any of your disks where you are required to answer "yes" two times. If you'd like to go the extra mile, you can disconnect/remove from your target system any drives that contain data you wouldn't want to lose. I wrote the installer in such a way that an accidental data wipe should not occur, but "should not" does not mean "never". Better safe than sorry!
 
 
 ## The project structure
