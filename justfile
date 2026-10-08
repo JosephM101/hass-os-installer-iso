@@ -10,7 +10,12 @@ default:
 
 install-depends:
     sudo apt-get update
-    sudo apt-get install debootstrap xorriso qemu-system-x86 ovmf live-build debian-archive-keyring -y
+    sudo apt-get install -y debootstrap xorriso live-build debian-archive-keyring
+    python3 -m pip install packaging
+
+install-qemu-depends:
+    sudo apt-get update
+    sudo apt-get install -y qemu-system-x86 ovmf
 
 
 [private]
