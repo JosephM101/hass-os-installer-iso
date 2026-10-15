@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provider "virtualbox" do |vb|
     vb.memory = "2048"
-    vb.cpus = 4
+    vb.cpus = 2
   end
 
   config.vm.post_up_message = ""
@@ -28,7 +28,7 @@ Vagrant.configure("2") do |config|
       apt-get install -y wget curl git
 
 
-      # Install casey/just (https://github.com/casey/just)
+      # Install 'just' command runner (https://github.com/casey/just)
       mkdir -p ~/bin
       curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin  # Download the latest prebuilt "just" binary into ~/bin
       export PATH="$PATH:$HOME/bin" # Add ~/bin to PATH so that we can run "just"
@@ -64,19 +64,28 @@ Vagrant.configure("2") do |config|
       # Copy the contents of the repository (including config files) to a directory within the Linux container for building.
       # We need to do this because we can't count on the host filesystem to support what we need to do (ex. NTFS wouldn't support this, but ext4 would)
       rm -rf $TEMP_BUILD_DIR  # Delete the temporary build directory if it exists
-      git clone $REPO_DIR $TEMP_BUILD_DIR && cd $TEMP_BUILD_DIR  # Clone into temp directory (I used git clone so that other files like old build artifacts wouldn't be transferred over)
-      cp $REPO_DIR/build-config .  # Copy the build-config file from host repo
+      echo " --> Copying build files..."
+      #git clone $REPO_DIR $TEMP_BUILD_DIR && cd $TEMP_BUILD_DIR  # Clone into temp directory (I used git clone so that other files like old build artifacts wouldn't be transferred over)
+      #cp $REPO_DIR/build-config .  # Copy the build-config file from host repo
+      rsync -av --progress --stats --include='*' --exclude='*.iso' $REPO_DIR $TEMP_BUILD_DIR
+
+      # Install dependencies
+      echo " --> just install-depends"
       just install-depends  # Install build dependencies
+
+      # Start building ISO
+      echo " --> Begin build process"
+      pip3 install packaging
       just build  # Start the build
 
-      # Copy built ISO file to out dir
+      # Copy build artifacts (ISO file) to output directory
       echo ""
-      echo "Copying build artifacts to $OUTPUT_DIR"
+      echo " --> Copying build artifacts to $OUTPUT_DIR"
       rsync -av --progress --stats --include='*.iso' --exclude='*' $TEMP_BUILD_DIR/ $OUTPUT_DIR/
 
-      echo "Build complete."
+      echo " --> Build complete."
 
-      # Shut down the guest
+      # Shut down the guest VM
       shutdown now
     SHELL
   end
