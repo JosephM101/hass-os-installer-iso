@@ -1,0 +1,8 @@
+bitmath
+click==8.1.8
+colorama==0.4.6
+humanize
+inquirer
+packaging==25.0
+psutil
+tqdm
