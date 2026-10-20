@@ -14,7 +14,7 @@ if color_enabled == False:
         RED = GREEN = RESET = ''
 
 
-# Define the minimum required version
+# Define the minimum required version of live-build
 LB_MIN_VERSION = "20240810"
 
 def check_live_build_installed():

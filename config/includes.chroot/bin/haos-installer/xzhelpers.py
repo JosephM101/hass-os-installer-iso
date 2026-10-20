@@ -12,6 +12,3 @@ def xz_get_uncompressed_size(file_path):
             size = int(size_str.replace(',', ''))
             return size
     return None
-
-
-

@@ -13,6 +13,7 @@ install-depends:
     sudo apt-get install -y debootstrap xorriso live-build debian-archive-keyring
     python3 -m pip install packaging
 
+
 install-qemu-depends:
     sudo apt-get update
     sudo apt-get install -y qemu-system-x86 ovmf
@@ -58,7 +59,7 @@ build: check-live-build check-build-config
 
 @run-qemu:
     #!/bin/bash
-    iso=( *.iso ) # Find all iso files in the current directory
+    iso=( *.iso ) # Find all .iso files in the current directory
 
     qemu-img create -f qcow2 $qemu_test_disk_filename 32G
     qemu_args=(

@@ -116,7 +116,7 @@ def install_haos(image_xz_path, target_drive):
         smoothing=0.0 # 0=average, 1=exact
         )
 
-    chunk_size_bytes = 1000*1000*chunk_size_mb  # Convert chunk_size_mb to bytes and store it. This is what we'll actually use.
+    chunk_size_bytes = 1000 * 1000 * chunk_size_mb  # Convert chunk_size_mb to bytes and store it. This is what we'll actually use.
 
     # Open a write-byte stream to the disk's device file
     with open(f"{dev_path}", "wb") as disk_writer:
@@ -129,7 +129,7 @@ def install_haos(image_xz_path, target_drive):
                 disk_writer.write(chunk)  # Write the data chunk to the disk
                 progress_bar.update(len(chunk))  # Update the progress bar
 
-    # We're done writing at this point...
+    # We're done writing the OS image to the disk at this point...
     progress_bar.close()
     print()
     print("Done writing image")
@@ -207,13 +207,13 @@ if __name__ == "__main__":
 WARNING: Your system has less than 4 GB of RAM. At least 8 GB is recommended for HAOS.
 You may run into stability problems with multiple addons.
               
-Your system has {round(total_system_memory_mb)} MB of RAM.
+Your system has {total_system_memory_mb:,.0f} MB of RAM.
 {Fore.RESET}""")
 
 
     print("""\
 Choose the disk you would like to install Home Assistant OS onto.
-For best results, use an SSD.
+For best results and performance, use an SSD.
 
 Please note that USB devices are strongly discouraged for reliability
 and speed reasons.
@@ -292,7 +292,7 @@ The selected device will be completely erased for the installation.
 
     clear_screen()
     if answers['poweroptions'] == "Reboot":
-        print("Rebooting now...")
+        print("Rebooting system now...")
         os.system("sudo reboot now")
         print()
     else:

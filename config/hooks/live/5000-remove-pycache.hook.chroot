@@ -4,6 +4,6 @@ set -e
 
 # Remove __pycache__ folders
 #
-# This removes byte-compiled Python modules to save some space.
+# Remove leftover Python cache files to save some space.
 
 find /bin -name "__pycache__" -print0 | xargs -0r rm -rf
