@@ -1,1 +1,2 @@
-pip install --break-system-packages inquirer bitmath
+pip install --break-system-packages inquirer bitmath packaging
+pip install --break-system-packages -r /bin/haos-installer/requirements.txt

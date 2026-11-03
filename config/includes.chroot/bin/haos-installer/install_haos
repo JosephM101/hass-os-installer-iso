@@ -75,7 +75,7 @@ class LinuxDiskObject:
 # If the installer script runs into an error that we can't recover from, we'll call this function.
 def fail_catastrophically(error_message):
     print(f"""{Fore.RED}\
-!!! Whoops! We ran into a situation that we can't recover from. The installation cannot continue.
+!!! Whoops! We ran into a situation that we couldn't recover from. The installation cannot continue.
 !!! The installer failed with the following error:
     {error_message}
 !!! The installer needs to restart.\
@@ -85,7 +85,7 @@ def fail_catastrophically(error_message):
 
 
 # Instead of calling "dd", I chose to write a function that manually unpacks the IMG file and writes its contents directly to the selected disk.
-# In addition to saving us a separate "uncompress" step (which can use a lot of RAM that we may not have), we have more control over the writing process, and can keep track of things like progress.
+# In addition to saving us a separate "uncompress" step (which can use a lot of RAM that we may not have), we have more control over the writing process, and can keep track of things like progress (tqdm).
 def install_haos(image_xz_path, target_drive):
     dev_path = f'/dev/{target_drive}' # The drive to write the image to
 

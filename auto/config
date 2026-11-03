@@ -65,8 +65,8 @@ args=(
 --debootstrap-options "--include=apt-transport-https,ca-certificates,openssl"
 --memtest false
 --iso-application "home-assistant-os-installer"
---iso-preparer "josephmignone"
---iso-publisher "josephmignone"
+--iso-preparer "josephm101"
+--iso-publisher "josephm101"
 --compression xz
 --verbose
 --color

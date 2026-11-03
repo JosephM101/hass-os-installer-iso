@@ -46,7 +46,7 @@ Vagrant.configure("2") do |config|
         mkdir -p livebuild-src && cd livebuild-src
         git clone https://salsa.debian.org/live-team/live-build.git live-build
         cd live-build
-        
+
         echo ""
         echo " >> Compile live-build"
         dpkg-buildpackage -b -uc -us
@@ -86,7 +86,7 @@ Vagrant.configure("2") do |config|
       echo " --> Build complete."
 
       # Shut down the guest VM
-      shutdown now
+      # shutdown now
     SHELL
   end
 end
