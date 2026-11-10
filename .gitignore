@@ -294,3 +294,4 @@ lib/vagrant/vagrant_ssl.so
 
 # direnv directory
 .direnv
+config/hooks/normal/5050-dracut.hook.chroot
