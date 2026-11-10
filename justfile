@@ -10,8 +10,7 @@ default:
 
 install-depends:
     sudo apt-get update
-    sudo apt-get install -y debootstrap xorriso live-build debian-archive-keyring
-    python3 -m pip install packaging
+    sudo apt-get install -y live-build debootstrap xorriso debian-archive-keyring python3 python3-pip python3-packaging
 
 
 install-qemu-depends:
@@ -35,7 +34,7 @@ check-live-build:
     python3 tools/check-live-build.py
 
 
-build-default: clean build
+# build-default: clean build
 
 
 build: check-live-build check-build-config
