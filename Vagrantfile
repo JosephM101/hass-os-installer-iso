@@ -25,7 +25,7 @@ Vagrant.configure("2") do |config|
 
       # Update APT and install some packages we'll need
       apt-get update
-      apt-get install -y wget curl git
+      apt-get install -y wget curl git rsync
 
 
       # Install 'just' command runner (https://github.com/casey/just)
@@ -67,7 +67,8 @@ Vagrant.configure("2") do |config|
       echo " --> Copying build files..."
       #git clone $REPO_DIR $TEMP_BUILD_DIR && cd $TEMP_BUILD_DIR  # Clone into temp directory (I used git clone so that other files like old build artifacts wouldn't be transferred over)
       #cp $REPO_DIR/build-config .  # Copy the build-config file from host repo
-      rsync -av --progress --stats --include='*' --exclude='*.iso' $REPO_DIR $TEMP_BUILD_DIR
+      rsync -av --progress --stats --include='*' --exclude='*.iso' $REPO_DIR/ $TEMP_BUILD_DIR
+      cd $TEMP_BUILD_DIR
 
       # Install dependencies
       echo " --> just install-depends"
