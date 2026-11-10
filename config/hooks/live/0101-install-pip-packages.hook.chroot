@@ -1,2 +1,3 @@
-pip install --break-system-packages inquirer bitmath packaging
+python3 -m venv /bin/haos-installer/venv
+source /bin/haos-installer/venv
 pip install --break-system-packages -r /bin/haos-installer/requirements.txt
