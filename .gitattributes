@@ -1,1 +1,4 @@
 * text eol=lf
+
+*.mod binary
+*.pf2 binary
