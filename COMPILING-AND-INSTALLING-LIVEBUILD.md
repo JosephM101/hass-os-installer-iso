@@ -30,7 +30,7 @@ The routines below has been adapted from [these instructions](https://live-team.
         cd ..  # Go to the parent directory
         sudo dpkg -i live-build*.deb
 
-Awesome, we've done it! Test out your new live-build installation by calling `lb --version`!
+Awesome, we're done! Test out your new live-build installation by calling `lb --version`.
 
     $ lb --version
     20240810
