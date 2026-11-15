@@ -48,29 +48,39 @@ args=(
 --bootloaders grub-efi
 --architecture amd64
 --linux-flavours amd64
---image-name "haos-installer-$CFG_HAOS_VERSION"
--b iso
---iso-volume "HAOS_INSTALLER"
 --system live
 --distribution bookworm
+
+# ISO config
+--binary-images iso
+--image-name "haos-installer-$CFG_HAOS_VERSION"
+--iso-application "home-assistant-os-installer"
+--iso-preparer "josephm101"
+--iso-publisher "josephm101"
+--iso-volume "HAOS_INSTALLER"
+
+# APT config
 --apt apt-get
 --apt-indices false
 --apt-source-archives false
 --archive-areas "main contrib"
---mode debian
 --apt-recommends false
+--debconf-frontend noninteractive
+--cache-packages false
+--apt-options "--yes --no-upgrade --allow-downgrades"
+
+--mode debian
 --debian-installer none
 --debian-installer-gui false
 --win32-loader false
 --debootstrap-options "--include=apt-transport-https,ca-certificates,openssl"
 --memtest false
---iso-application "home-assistant-os-installer"
---iso-preparer "josephm101"
---iso-publisher "josephm101"
 --compression xz
+--firmware-binary true
+--firmware-chroot true
+--clean
 --verbose
 --color
---clean
 #--bootappend-live "boot=live components hostname=live-boot username=live"
 #--interactive shell
 )
