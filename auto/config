@@ -67,7 +67,6 @@ args=(
 --apt-recommends false
 --debconf-frontend noninteractive
 --cache-packages false
---apt-options "--yes --no-upgrade --allow-downgrades"
 
 --mode debian
 --debian-installer none
