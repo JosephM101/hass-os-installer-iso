@@ -62,7 +62,7 @@ def main():
         print(f"live-build reported version: {installed_version}")
         print(f"At least live-build version {LB_MIN_VERSION} is required.")
         print()
-        print("If the version of live-build in your distro's repositories are too old, you will need to compile and install from source. See COMPILING-AND-INSTALLING-LIVEBUILD.md for more information.")
+        print("If the version of live-build in your distro's repositories are too old, you either need to update your sources, or compile and install live-build from source. See COMPILING-AND-INSTALLING-LIVEBUILD.md for more information.")
         sys.exit(1)
 
 if __name__ == "__main__":
