@@ -167,6 +167,5 @@ If you want to delete the box and reclaim disk space, run the following command:
 ## Roadmap
 
 - [x] Make installer functional (Home Assistant OS is installed to internal drive)
-- [ ] Move to using TOML for build definitions
-- [ ] Streamline build process (and make it less janky)
+- [x] Streamline build process (and make it less janky)
 - [ ] Add action for automatically building new images when new versions of HAOS are released
