@@ -71,8 +71,8 @@ Vagrant.configure("2") do |config|
       cd $TEMP_BUILD_DIR
 
       # Install dependencies
-      echo " --> just install-depends"
-      just install-depends  # Install build dependencies
+      echo " --> just install-deps"
+      just install-deps  # Install build dependencies
 
       # Start building ISO
       echo " --> Begin build process"

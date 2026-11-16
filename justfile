@@ -10,12 +10,12 @@ default:
   just --list
 
 
-install-depends:
+install-deps:
     sudo apt-get update
     sudo apt-get install -y live-build debootstrap xorriso debian-archive-keyring python3 python3-pip python3-packaging
 
 
-install-qemu-depends:
+install-qemu-deps:
     sudo apt-get update
     sudo apt-get install -y qemu-system-x86 ovmf
 
@@ -43,7 +43,7 @@ build: check-live-build check-build-config
     tools/setup-build-dir.sh
     cd $build_dir && lb config
     cd $build_dir && sudo lb build
-    
+
 
 @clean:
     cd $build_dir && sudo lb clean --all
