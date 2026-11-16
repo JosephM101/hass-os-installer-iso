@@ -67,4 +67,4 @@ build: check-live-build check-build-config
 
 
 @run-qemu:
-    tools/run_qemu.sh
+    tools/run-qemu.sh
