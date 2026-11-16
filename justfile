@@ -2,6 +2,8 @@ set export  # Export the above defined variables to the current environment, for
 
 qemu_test_disk_filename := "test-disk.qcow2"
 build_config_filename := "build-config"
+build_dir := "build"
+output_dir := "output"
 
 # Formulas
 default:
@@ -30,7 +32,7 @@ check-build-config:
 
 
 [private]
-check-live-build:
+@check-live-build:
     python3 tools/check-live-build.py
 
 
@@ -38,36 +40,31 @@ check-live-build:
 
 
 build: check-live-build check-build-config
-    lb config
-    sudo lb build
-
+    tools/setup-build-dir.sh
+    cd $build_dir && lb config
+    cd $build_dir && sudo lb build
+    
 
 @clean:
-    sudo lb clean --all
+    cd $build_dir && sudo lb clean --all
+
+
+@clean-output:
+    rm -rf $output_dir
+
+
+@clean-qemu:
     rm -f $qemu_test_disk_filename
 
 
 [confirm("Are you sure you want to clean everything? (y/n)")]
-@fully-clean:
-    sudo lb clean --all
-    sudo lb clean --purge
-    sudo rm -rf cache
-    sudo rm -rf .build
-    rm -f $qemu_test_disk_filename
+@clean-all: clean clean-qemu
+    cd $build_dir && sudo lb clean --all
+    cd $build_dir && sudo lb clean --purge
+    cd $build_dir && sudo rm -rf cache
+    cd $build_dir && sudo rm -rf .build
+    sudo rm -rf $build_dir
 
 
 @run-qemu:
-    #!/bin/bash
-    iso=( *.iso ) # Find all .iso files in the current directory
-
-    qemu-img create -f qcow2 $qemu_test_disk_filename 32G
-    qemu_args=(
-        --bios /usr/share/ovmf/OVMF.fd
-        -m 1024
-        -smp 2
-        -nic user,model=virtio-net-pci
-        -cdrom ${iso[0]} # Use the first ISO image found
-        -hda test-disk.qcow2
-    )
-    qemu-system-x86_64 ${qemu_args[@]}
-    #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
+    tools/run_qemu.sh

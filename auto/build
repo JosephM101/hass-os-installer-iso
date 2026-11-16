@@ -1,4 +1,25 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 lb build noauto "${@}" 2>&1 | tee build.log
+
+
+# Move new iso image and like files to output/
+iso=( *.iso )
+if [ -e ${iso[0]} ]; then
+    output_dir="output"
+
+    if [ ! -e $output_dir ]; then
+        mkdir $output_dir
+    fi
+
+    iso_name=$(basename ${iso[0]} .iso)
+
+    sudo mv -f -v ${iso_name}.* ./$output_dir
+
+    echo ""
+    echo "Image built: $(readlink -m $output_dir/${iso[0]})"
+else
+    echo ""
+    echo "E: No ISO images found to move to output directory. The build may have failed."
+fi
