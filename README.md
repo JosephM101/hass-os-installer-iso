@@ -97,7 +97,7 @@ To install `just` on your system, run the following commands (`bash` is assumed)
 
 If you have the Rust toolchain and Cargo installed, alternatively you can install `just` by running:
 
-    cargo install just  # Will build the latest version, and will also automatically be included in your PATH
+    cargo install just
 
 #### Dependency: `live-build`
 Currently, the version of `live-build` included in Ubuntu's repositories is many years behind. If you are building on Ubuntu, and run into an issue with the `live-build` version check failing when running `just build`, you can compile and install from source. See [Compiling and Installing live-build](COMPILING-AND-INSTALLING-LIVEBUILD.md)
