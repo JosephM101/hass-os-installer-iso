@@ -1,3 +1,6 @@
+build/
+output/
+
 .venv/
 /binary/
 /cache/
@@ -37,10 +40,6 @@ config/includes.chroot/haos-image
 config/includes.chroot/haos-image/*
 config/bootloaders/grub-pc/grub.cfg
 test-disk.qcow2
-
-
-
-
 
 
 ### Python
