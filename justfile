@@ -12,12 +12,12 @@ default:
 
 install-deps:
     sudo apt-get update
-    sudo apt-get install -y live-build debootstrap xorriso debian-archive-keyring python3 python3-pip python3-packaging
+    sudo apt-get install -y wget curl rsync live-build debootstrap xorriso debian-archive-keyring python3 python3-pip python3-packaging
 
 
 install-qemu-deps:
     sudo apt-get update
-    sudo apt-get install -y qemu-system-x86 ovmf
+    sudo apt-get install -y qemu-system-x86 qemu-system-gui qemu-utils ovmf
 
 
 [private]
