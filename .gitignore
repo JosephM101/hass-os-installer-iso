@@ -42,10 +42,6 @@ config/bootloaders/grub-pc/grub.cfg
 test-disk.qcow2
 
 
-
-
-
-
 ### Python
 
 # Byte-compiled / optimized / DLL files
