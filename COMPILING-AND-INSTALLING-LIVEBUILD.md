@@ -1,6 +1,6 @@
 # Compiling and Installing `live-build` manually
 
-As I mentioned in README.md, the version of `live-build` shipped with some Debian-based Linux distros (I used Linux Mint which uses Ubuntu repositories) is several years behind at the time of writing (I got a version from 2012), even with the latest repositories. To get around this, we can manually compile and install the latest version of `live-build`.
+As I mentioned in README.md, the version of `live-build` that ships with some Debian-based Linux distros (I used Linux Mint 22, which uses Ubuntu repositories) is several years behind at the time of writing (I got a version from 2012), even with the latest repositories. To get around this, we can manually compile and install the latest version of `live-build`.
 
 ## Build
 The routines below has been adapted from [these instructions](https://live-team.pages.debian.net/live-manual/html/live-manual/installation.en.html). What this boils down to is downloading the latest source, building a `deb` package, and then installing that to our system.
