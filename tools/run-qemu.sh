@@ -13,6 +13,7 @@ qemu_args=(
     -nic user,model=virtio-net-pci
     -cdrom ${iso[0]} # Use the first ISO image found
     -hda test-disk.qcow2
+    -display sdl
 )
 qemu-system-x86_64 ${qemu_args[@]}
 #sudo qemu-system-x86_64 --enable-kvm ${qemu_args[@]}
