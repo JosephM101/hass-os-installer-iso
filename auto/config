@@ -4,7 +4,7 @@
 set -e
 
 source build-config
-echo "HAOS Version: $CFG_HAOS_VERSION"
+echo "build-config: HAOS Version: $CFG_HAOS_VERSION"
 
 patch_grub_config() {
     local GRUB_CFG="config/bootloaders/grub-pc/grub.cfg"
