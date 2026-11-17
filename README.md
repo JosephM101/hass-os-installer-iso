@@ -5,7 +5,7 @@ A simple live system based on `debian-bookworm` to quickly install Home Assistan
 
 This live system only supports *AMD64* systems with *UEFI* bootloaders. These are the requirements for Home Assistant OS (amd64), and therefore they are the requirements here.
 
-The image is built using `live-build`, which is a system for creating customized Debian-based live images.
+The live image is built using `live-build`, which is a collection of scripts plus `debootstrap` for creating customized Debian-based live images.
 
 <b>NOTE: This project is still in development. As such, ISO images will not be published in Releases at this time and will need to be [built manually](#Build). An Actions workflow will become available once consistent, autonomous builds are possible. The plan is to have images be automatically built when new HAOS versions are released. Contributions in the form of pull requests are welcome!</b>
 
@@ -17,7 +17,7 @@ Like any bootable ISO file, you can write it to a USB drive using [balenaEtcher]
 > Personally, I like using the [Ventoy](https://www.ventoy.net/en/index.html) bootloader on my USB drives because it allows me to store multiple bootable ISO files as well as other files on a single flash drive without needing to reformat for a different operating system every time.
 
 Once you have booted the installer, you will be asked to choose the disk where you want to install Home Assistant from a list. To make sure you don't accidentally select the wrong thing, you will be asked TWICE to confirm your selection. Once you have confirmed that you would like to continue with the installation, the Home Assistant OS image (included in the ISO) will be written straight to the selected drive, and once complete, you will be given the option to either reboot into your new installation or shut down your machine.
-> I may, in the future, add the ability to download the latest version of Home Assistant OS from the internet directly from the installer. This may be offered in the form of a separate ISO image labeled "netinstall", but the feature could also be included in the main ISO.
+> I may, in the future, add the ability to download the latest version of Home Assistant OS from the internet directly from the installer. This may be offered in the form of a separate "netinstall" variant, but the feature could also be included in the main ISO.
 
 
 ## Why?
@@ -173,4 +173,5 @@ If you want to delete the box and reclaim disk space, run the following command:
 
 - [x] Make installer functional (Home Assistant OS is installed to internal drive)
 - [x] Streamline build process (and make it less janky)
+- [ ] \[Installer]\ Add ability to download HAOS if a newer version is available
 - [ ] Add action for automatically building new images when new versions of HAOS are released
